@@ -10,13 +10,10 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(parent)
 
         # size
-        self.setFixedSize(175, 35)
+        # self.setFixedSize(175, 35)
 
         # title
         self.setWindowTitle("Quick Task Switcher")
-
-        # title bar status
-        self.titlebar_hidden = False
 
         # current flags
         self.flags = [
@@ -38,9 +35,25 @@ class MainWindow(QtWidgets.QMainWindow):
         # show
         self.show()
 
+        # show/hide titlebar
+        self.set_titlebar_state_from_config()
+
         # move to last known location if any
         if config.json_config.last_position is not None:
             self.move(*config.json_config.last_position)
+
+    def set_titlebar_state_from_config(self):
+        if not config.json_config.titlebar_hidden:
+            if QtCore.Qt.FramelessWindowHint in self.flags:
+                self.flags.remove(QtCore.Qt.FramelessWindowHint)
+        else:
+            self.flags.append(QtCore.Qt.FramelessWindowHint)
+        self.set_flags()
+        self.show()
+
+    def center(self):
+        # TODO: hard coded coordinates!
+        self.move(300, 300)
 
     def set_flags(self):
         flags = 0
@@ -48,10 +61,12 @@ class MainWindow(QtWidgets.QMainWindow):
             flags |= flag
         self.setWindowFlags(flags)
 
-    def closeEvent(self, event):
+    def aboutToClose(self):
         # save position
         config.json_config.last_position = self.pos().x(), self.pos().y()
 
+    def closeEvent(self, event):
+        self.aboutToClose()
         config.quit_func()
 
     def keyPressEvent(self, event):
@@ -65,11 +80,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # T to toggle titlebar
         if event.key() == QtCore.Qt.Key_T:
-            if self.titlebar_hidden:
-                self.flags.remove(QtCore.Qt.FramelessWindowHint)
-                self.titlebar_hidden = False
-            else:
-                self.flags.append(QtCore.Qt.FramelessWindowHint)
-                self.titlebar_hidden = True
-            self.set_flags()
+            config.json_config.titlebar_hidden = not config.json_config.titlebar_hidden
+            self.set_titlebar_state_from_config()
             self.show()

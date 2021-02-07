@@ -11,6 +11,6 @@ def load_json_config():
 
 
 def save_json_config():
-    json_config = config.json_config.to_json(indent=4)
+    json_config = config.json_config.to_json(indent=2)
     with open(config.json_config.config_path, 'w') as fp:
         fp.write(json_config)

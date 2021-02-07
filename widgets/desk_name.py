@@ -1,9 +1,82 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui
+
+from globals import signals, config
 
 
-class DeskNameWidget(QtWidgets.QWidget):
+class DeskNameLabel(QtWidgets.QLabel):
 
     def __init__(self, parent):
-        super(DeskNameWidget, self).__init__(parent)
+        super(DeskNameLabel, self).__init__(parent)
 
+        # set name (for css ref for instance)
+        self.setObjectName("DeskNameLabel")
 
+        # set initial text
+        self.updateText()
+
+        # show
+        self.show()
+
+        # connect signals
+        signals.currDeskChanged.connect(self.updateText)
+        signals.currDeskNameChanged.connect(self.currDeskNameChanged)
+
+    @QtCore.pyqtSlot()
+    def currDeskNameChanged(self):
+        # add name to history
+        new_desk_name = config.json_config.desktop_names[config.curr_desk - 1]
+        config.json_config.desktop_names_history.append(new_desk_name)
+
+        # remove old entries if applicable
+        max_size = config.json_config.desktop_names_history_max_size
+        if len(config.json_config.desktop_names_history) > max_size:
+            del config.json_config.desktop_names_history[:-max_size]
+
+        self.updateText()
+
+    @QtCore.pyqtSlot()
+    def updateText(self):
+        self.setText(config.json_config.desktop_names[config.curr_desk - 1])
+
+    def mousePressEvent(self, ev: QtGui.QMouseEvent) -> None:
+        if ev.button() == QtCore.Qt.LeftButton:
+            # change current desktop name
+            curr_desk_name = config.json_config.desktop_names[config.curr_desk - 1]
+
+            # create input dialog
+            input_dialog = QtWidgets.QInputDialog(self)
+            input_dialog.setWindowTitle("New Desktop Name")
+            input_dialog.setLabelText("Desktop name:")
+            input_dialog.setTextValue(curr_desk_name)
+
+            # auto complete with previous desktop names
+            # https://stackoverflow.com/a/57077334/1617883
+            line_edit: QtWidgets.QLineEdit = input_dialog.findChild(QtWidgets.QLineEdit)
+            completer = QtWidgets.QCompleter(config.json_config.desktop_names_history)
+            line_edit.setCompleter(completer)
+
+            # execute dialog
+            ok = input_dialog.exec_() == QtWidgets.QDialog.Accepted
+
+            # process results
+            if ok:
+                new_desk_name_input = input_dialog.textValue()
+                # validate input
+                valid_name = True
+                if len(new_desk_name_input) == 0:
+                    QtWidgets.QMessageBox.critical(self, 'Invalid Name', 'Entered name is empty!')
+                    valid_name = False
+                if len(new_desk_name_input) > config.json_config.desk_name_char_limit:
+                    QtWidgets.QMessageBox.critical(self, 'Invalid Name',
+                                                   f'Name must have less than {config.json_config.desk_name_char_limit} characters')
+                    valid_name = False
+                if new_desk_name_input == curr_desk_name:
+                    QtWidgets.QMessageBox.critical(self, 'Invalid Name', 'Same old name has been entered')
+                    valid_name = False
+
+                # change name!
+                if valid_name:
+                    config.json_config.desktop_names[config.curr_desk - 1] = new_desk_name_input
+
+                    # publish
+                    signals.currDeskNameChanged.emit()

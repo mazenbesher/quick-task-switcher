@@ -1,0 +1,43 @@
+QPushButton, QLabel {
+    font-size: 13px;
+}
+
+QLabel#DeskNameLabel {
+    margin-left: 5px;
+    font-size: 15px;
+}
+
+QLabel#DeskTimerLabel {
+    margin-right: 5px;
+    font-size: 15px;
+}
+
+QWidget#DeskNumKeysWidget {
+    margin: 0px;
+    padding: 0px;
+}
+
+QPushButton#DeskNumBtn {
+    margin: 0px;
+    padding: 5px;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+}
+
+QPushButton#DeskNumBtn[active=true] {
+    background-color: yellow;
+}
+
+QPushButton#DeskNumBtn:disabled {
+    border-color: gray;
+}
+
+QPushButton#NewDeskBtn {
+    background-color: red;
+}
+
+QLabel#DeskNameLabel {
+    /*font-size: 12px;*/
+}

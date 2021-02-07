@@ -5,11 +5,14 @@
 ## Docs
 
 - System Tray: https://www.learnpyqt.com/tutorials/system-tray-mac-menu-bar-applications-pyqt/
+- QInputDialog: https://doc.qt.io/qt-5/qinputdialog.html
 
 # TODOS
 
-- [ ] system tray icon
-
+- [x] system tray icon
+- [ ] implement extension system with sample extensions:
+    - [ ] music control
+  
 # Attribution
 
 - Tray Icons: by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under

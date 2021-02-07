@@ -10,47 +10,27 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
     def __init__(self, parent):
         super(DeskNumKeysWidget, self).__init__(parent)
 
-        # style
-        self.setStyleSheet('''
-            QPushButton {
-                margin: 0px;
-                padding: 0px;
-
-                border-width: 1px;
-                border-style: solid;
-                border-color: black;
-            }
-
-            QPushButton[active=true] {
-                background-color: yellow;
-            }
-
-            QPushButton:disabled  {
-                border-color: gray;
-            }
-
-            QPushButton#NewDeskBtn {
-                background-color: red;
-            }
-            ''')
+        # set name (for css ref for instance)
+        self.setObjectName("DeskNumKeysWidget")
 
         # layout
         layout = QtWidgets.QHBoxLayout()
-        layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setAlignment(QtCore.Qt.AlignCenter)
+        # layout.setSpacing(0)
+        # layout.setContentsMargins(0, 0, 0, 0)
+        # layout.setAlignment(QtCore.Qt.AlignCenter)
         self.setLayout(layout)
 
         # desk num buttons
         self.desk_num_btns = []
         for btn_desk_num in range(1, 10):
             desk_num_btn = QtWidgets.QPushButton(str(btn_desk_num))
+            desk_num_btn.setObjectName("DeskNumBtn")
 
             # margins
-            desk_num_btn.setContentsMargins(0, 0, 0, 0)
+            # desk_num_btn.setContentsMargins(0, 0, 0, 0)
 
             # set size
-            desk_num_btn.setFixedSize(17, 25)
+            # desk_num_btn.setFixedSize(17, 25)
 
             # add click handler
             desk_num_btn.clicked.connect(self.onDeskNumClick(btn_desk_num))
@@ -68,13 +48,18 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
         new_desk_btn = QtWidgets.QPushButton('+')
         new_desk_btn.setContentsMargins(0, 0, 0, 0)
         new_desk_btn.setFixedSize(17, 25)
-        new_desk_btn.clicked.connect(lambda: keyboard.press_and_release('ctrl+win+d'))
+        new_desk_btn.clicked.connect(self.newDesk)
         new_desk_btn.setObjectName('NewDeskBtn')
         layout.addWidget(new_desk_btn)
 
         # connect signals
         signals.currDeskChanged.connect(self.updateBtnsColor)
-        signals.deskCountChanged.connect(self.updateBtnsDisabledState)
+        signals.newDesk.connect(self.updateBtnsDisabledState)
+        signals.deskClosed.connect(self.updateBtnsDisabledState)
+
+    def newDesk(self):
+        keyboard.press_and_release('ctrl+win+d')
+        desk_info.update()
 
     @QtCore.pyqtSlot()
     def updateBtnsColor(self):
@@ -82,7 +67,7 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
             btn_desk_num = int(desk_num_btn.text())
 
             # active state (for styling)
-            if config.currDesk == btn_desk_num:
+            if config.curr_desk == btn_desk_num:
                 desk_num_btn.setProperty('active', True)
             else:
                 desk_num_btn.setProperty('active', False)
@@ -97,7 +82,7 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
             btn_desk_num = int(desk_num_btn.text())
 
             # disable state
-            if btn_desk_num > config.deskCount:
+            if btn_desk_num > config.desk_count:
                 desk_num_btn.setDisabled(True)
             else:
                 desk_num_btn.setDisabled(False)
@@ -120,7 +105,7 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
             if curr_desk > 0:
                 curr_desk -= 1
         else:  # wheel up
-            if curr_desk < config.deskCount - 1:
+            if curr_desk < config.desk_count - 1:
                 curr_desk += 1
 
         desk_info.go_to_desk(curr_desk + 1)
