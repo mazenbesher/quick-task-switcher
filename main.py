@@ -3,12 +3,22 @@ import sys
 from PyQt5 import QtWidgets
 
 from windows import MainWindow
-from utils import tray
+from utils import tray, config_manager
 from globals import config
+import actions
 
 
 def main():
+    # load config
+    config_manager.load_json_config()
+
+    # create app
     app = QtWidgets.QApplication(sys.argv)
+
+    # quit function
+    def quit_func():
+        config_manager.save_json_config()
+        app.quit()
 
     # system tray
     config.tray = tray.create()
@@ -18,9 +28,9 @@ def main():
     config.tray.setContextMenu(config.tray_menu)
 
     # add quit action to system tray
-    quit = QtWidgets.QAction("Quit")
-    quit.triggered.connect(app.quit)
-    config.tray_menu.addAction(quit)
+    config.quit_func = quit_func
+    config.quit_action = actions.create_quit_action(app)
+    config.tray_menu.addAction(config.quit_action)
 
     # main window
     main_window = MainWindow()

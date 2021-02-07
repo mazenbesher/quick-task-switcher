@@ -1,4 +1,4 @@
 from .help import ShortcutsDesc
 from .signals import signals
 from .paths import iconPaths
-from .config import config
+from .config import config, JSONConfig

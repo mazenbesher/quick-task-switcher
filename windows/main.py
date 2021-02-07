@@ -1,9 +1,8 @@
-import sys
-
 from PyQt5 import QtCore, QtWidgets
 
-from .help import HelpWindow
+from globals import config
 from widgets import MainWidget
+from .help import HelpWindow
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -39,6 +38,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # show
         self.show()
 
+        # move to last known location if any
+        if config.json_config.last_position is not None:
+            self.move(*config.json_config.last_position)
+
     def set_flags(self):
         flags = 0
         for flag in self.flags:
@@ -46,12 +49,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowFlags(flags)
 
     def closeEvent(self, event):
-        sys.exit()
+        # save position
+        config.json_config.last_position = self.pos().x(), self.pos().y()
+
+        config.quit_func()
 
     def keyPressEvent(self, event):
         # escape to close
         if event.key() == QtCore.Qt.Key_Escape:
-            sys.exit()
+            self.closeEvent(event)
 
         # ? to show help
         if event.key() == QtCore.Qt.Key_Question:
