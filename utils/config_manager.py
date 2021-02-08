@@ -3,11 +3,23 @@ import os
 from globals import config, JSONConfig
 
 
+def validate_config():
+    assert len(config.json_config.desktop_names) == 9
+    assert len(config.json_config.desktop_names_history) <= config.json_config.desktop_names_history_max_size
+    assert 0 < config.json_config.main_window_opacity <= 1
+    assert config.json_config.grab_area_min_size[0] > 0
+    assert config.json_config.grab_area_min_size[1] > 0
+    assert len(config.json_config.config_path) != 0
+    assert config.json_config.desk_name_char_limit > 0
+    assert config.json_config.check_interval > 10
+
+
 def load_json_config():
     if os.path.exists(config.json_config.config_path):
         with open(config.json_config.config_path) as fp:
             json_config = JSONConfig.from_json(fp.read())
         config.json_config = json_config
+    validate_config()
 
 
 def save_json_config():
