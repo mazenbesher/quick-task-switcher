@@ -5,6 +5,7 @@ from globals import config, signals
 from .desk_num_key import DeskNumKeysWidget
 from .desk_name import DeskNameLabel
 from .desk_timer import DeskTimerLabel
+from .grab_widget import GrabWidget
 
 
 class MainWidget(QtWidgets.QWidget):
@@ -36,6 +37,7 @@ class MainWidget(QtWidgets.QWidget):
         # desk name and timer on the same line
         sublayout = QtWidgets.QHBoxLayout()
         sublayout.addWidget(DeskNameLabel(self), alignment=QtCore.Qt.AlignLeft)
+        sublayout.addWidget(GrabWidget(self), alignment=QtCore.Qt.AlignCenter)
         sublayout.addWidget(DeskTimerLabel(self), alignment=QtCore.Qt.AlignRight)
         sublayout.setSpacing(0)
         sublayout.setContentsMargins(0, 0, 0, 0)

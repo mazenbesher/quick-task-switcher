@@ -33,6 +33,9 @@ class JSONConfig:
     #
     main_window_opacity: float = 0.8
 
+    # grab area min width and height
+    grab_area_min_size: Tuple[int, int] = (20, 10)
+
 
 class Config:
     # info about current desktop
