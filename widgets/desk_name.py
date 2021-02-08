@@ -54,24 +54,17 @@ class DeskNameLabel(QtWidgets.QLabel):
             # change current desktop name
             curr_desk_name = config.json_config.desktop_names[config.curr_desk - 1]
 
-            # create input dialog
-            input_dialog = QtWidgets.QInputDialog(self)
-            input_dialog.setWindowTitle("New Desktop Name")
-            input_dialog.setLabelText("Desktop name:")
-            input_dialog.setTextValue(curr_desk_name)
-
-            # auto complete with previous desktop names
-            # https://stackoverflow.com/a/57077334/1617883
-            line_edit: QtWidgets.QLineEdit = input_dialog.findChild(QtWidgets.QLineEdit)
-            completer = QtWidgets.QCompleter(config.json_config.desktop_names_history)
-            line_edit.setCompleter(completer)
-
-            # execute dialog
-            ok = input_dialog.exec_() == QtWidgets.QDialog.Accepted
+            # create input dialog with editable combobox from previous desktops
+            options = [curr_desk_name] + config.json_config.desktop_names_history
+            new_desk_name_input, ok = QtWidgets.QInputDialog.getItem(self,
+                                                                     "New Desktop Name",
+                                                                     "Desktop name:",
+                                                                     options,
+                                                                     0,
+                                                                     True)
 
             # process results
             if ok:
-                new_desk_name_input = input_dialog.textValue()
                 # validate input
                 valid_name = True
                 if len(new_desk_name_input) == 0:
