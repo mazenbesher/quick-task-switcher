@@ -1,5 +1,5 @@
 QPushButton, QLabel {
-    font-size: 13px;
+    font-size: 12px;
 }
 
 QLabel#DeskNameLabel {
@@ -17,7 +17,15 @@ QWidget#DeskNumKeysWidget {
     padding: 0px;
 }
 
+QWidget#MainWidget {
+    margin: 0px;
+    padding: 0px;
+}
+
 QPushButton#DeskNumBtn {
+    width: 6px;
+    height: 12px;
+
     margin: 0px;
     padding: 5px;
 
@@ -28,6 +36,10 @@ QPushButton#DeskNumBtn {
 
 QPushButton#DeskNumBtn[active=true] {
     background-color: yellow;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
 }
 
 QPushButton#DeskNumBtn:disabled {
@@ -36,6 +48,16 @@ QPushButton#DeskNumBtn:disabled {
 
 QPushButton#NewDeskBtn {
     background-color: red;
+
+    width: 8px;
+    height: 12px;
+
+    margin: 0px;
+    padding: 5px;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
 }
 
 QLabel#DeskNameLabel {

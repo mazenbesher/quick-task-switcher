@@ -15,15 +15,17 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
 
         # layout
         layout = QtWidgets.QHBoxLayout()
-        # layout.setSpacing(0)
-        # layout.setContentsMargins(0, 0, 0, 0)
-        # layout.setAlignment(QtCore.Qt.AlignCenter)
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setAlignment(QtCore.Qt.AlignCenter)
         self.setLayout(layout)
 
         # desk num buttons
         self.desk_num_btns = []
         for btn_desk_num in range(1, 10):
             desk_num_btn = QtWidgets.QPushButton(str(btn_desk_num))
+
+            # set object name
             desk_num_btn.setObjectName("DeskNumBtn")
 
             # margins
@@ -46,8 +48,8 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
 
         # new desk button
         new_desk_btn = QtWidgets.QPushButton('+')
-        new_desk_btn.setContentsMargins(0, 0, 0, 0)
-        new_desk_btn.setFixedSize(17, 25)
+        # new_desk_btn.setContentsMargins(0, 0, 0, 0)
+        # new_desk_btn.setFixedSize(17, 25)
         new_desk_btn.clicked.connect(self.newDesk)
         new_desk_btn.setObjectName('NewDeskBtn')
         layout.addWidget(new_desk_btn)

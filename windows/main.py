@@ -9,9 +9,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None) -> None:
         super(MainWindow, self).__init__(parent)
 
-        # size
-        # self.setFixedSize(175, 35)
-
         # title
         self.setWindowTitle("Quick Task Switcher")
 
@@ -41,6 +38,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # move to last known location if any
         if config.json_config.last_position is not None:
             self.move(*config.json_config.last_position)
+
+        # TODO: workaround to remove extra space at top and bottom
+        self.resize(100, 50)
 
     def set_titlebar_state_from_config(self):
         if not config.json_config.titlebar_hidden:

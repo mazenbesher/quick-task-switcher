@@ -13,6 +13,9 @@ class MainWidget(QtWidgets.QWidget):
         super(MainWidget, self).__init__(parent)
         # self.grabButton = grabButton
 
+        # set name (for css ref for instance)
+        self.setObjectName("MainWidget")
+
         # TODO: enable only via a flag
         # TODO: automate this in a loop
         signals.deskClosed.connect(self.signalsDebugFn('deskClosed'))
@@ -31,10 +34,12 @@ class MainWidget(QtWidgets.QWidget):
         layout.addWidget(DeskNumKeysWidget(self))
 
         # desk name and timer on the same line
-        sublayput = QtWidgets.QHBoxLayout()
-        sublayput.addWidget(DeskNameLabel(self), alignment=QtCore.Qt.AlignLeft)
-        sublayput.addWidget(DeskTimerLabel(self), alignment=QtCore.Qt.AlignRight)
-        layout.addLayout(sublayput)
+        sublayout = QtWidgets.QHBoxLayout()
+        sublayout.addWidget(DeskNameLabel(self), alignment=QtCore.Qt.AlignLeft)
+        sublayout.addWidget(DeskTimerLabel(self), alignment=QtCore.Qt.AlignRight)
+        sublayout.setSpacing(0)
+        sublayout.setContentsMargins(0, 0, 0, 0)
+        layout.addLayout(sublayout)
 
         # refresh desk info each check_interval
         self.timer = QtCore.QTimer()
