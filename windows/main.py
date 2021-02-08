@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config
 from widgets import MainWidget
@@ -83,3 +83,9 @@ class MainWindow(QtWidgets.QMainWindow):
             config.json_config.titlebar_hidden = not config.json_config.titlebar_hidden
             self.set_titlebar_state_from_config()
             self.show()
+
+    def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
+        menu = QtWidgets.QMenu(self)
+        quit_action = menu.addAction("Quit")
+        quit_action.triggered.connect(self.closeEvent)
+        menu.exec_(self.mapToGlobal(event.pos()))
