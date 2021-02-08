@@ -20,6 +20,17 @@ class DeskNameLabel(QtWidgets.QLabel):
         # connect signals
         signals.currDeskChanged.connect(self.updateText)
         signals.currDeskNameChanged.connect(self.currDeskNameChanged)
+        signals.deskClosed.connect(self.deskClosed)
+
+    @QtCore.pyqtSlot()
+    def deskClosed(self):
+        # shift desktop names by one
+        closed_desk_id = config.curr_desk - 1
+
+        for desk_id in range(closed_desk_id, config.desk_count - 1):
+            print(
+                f'renaming desktop {desk_id} from {config.json_config.desktop_names[desk_id]} to {config.json_config.desktop_names[desk_id + 1]}')
+            config.json_config.desktop_names[desk_id] = config.json_config.desktop_names[desk_id + 1]
 
     @QtCore.pyqtSlot()
     def currDeskNameChanged(self):

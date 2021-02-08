@@ -30,6 +30,9 @@ class JSONConfig:
     desktop_names_history_max_size: int = 2
     desktop_names_history: List[str] = field(default_factory=lambda: [])
 
+    #
+    main_window_opacity: float = 0.8
+
 
 class Config:
     # info about current desktop

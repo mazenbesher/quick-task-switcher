@@ -20,7 +20,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_flags()
 
         # semi-transparent
-        self.setWindowOpacity(0.8)
+        self.setWindowOpacity(config.json_config.main_window_opacity)
 
         # central widget
         main_widget = MainWidget(self)

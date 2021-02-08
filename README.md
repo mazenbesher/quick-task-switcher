@@ -14,6 +14,8 @@
 - [ ] implement extension system with sample extensions:
     - [ ] music control
 - [ ] improve packaging with a custom name and parameters
+- [ ] support more than 9 desktops
+- [ ] minimize
 
 # Packaging
 
