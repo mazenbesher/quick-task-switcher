@@ -1,6 +1,6 @@
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 
-from utils import desk_info
+from utils import desk_info, desk_manager
 from globals import config, signals
 from .desk_num_key import DeskNumKeysWidget
 from .desk_name import DeskNameLabel
@@ -50,6 +50,21 @@ class MainWidget(QtWidgets.QWidget):
             print(msg)
 
         return fn
+
+    def wheelEvent(self, event: QtGui.QWheelEvent) -> None:
+        # wheel up or down
+        down = event.angleDelta().y() < 0
+        curr_desk = desk_manager.get_curr_desktop_number()
+
+        if down:
+            if curr_desk > 0:
+                curr_desk -= 1
+        else:  # wheel up
+            if curr_desk < config.desk_count - 1:
+                curr_desk += 1
+
+        desk_info.go_to_desk(curr_desk + 1)
+        super(MainWidget, self).wheelEvent(event)
 
     # Grabbable (can be moved using the grabButton) main widget
 

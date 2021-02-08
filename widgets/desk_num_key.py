@@ -95,18 +95,3 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
             desk_info.go_to_desk(desk_num)
 
         return onClick
-
-    def wheelEvent(self, event: QtGui.QWheelEvent) -> None:
-        # wheel up or down
-        down = event.angleDelta().y() < 0
-        curr_desk = desk_manager.get_curr_desktop_number()
-
-        if down:
-            if curr_desk > 0:
-                curr_desk -= 1
-        else:  # wheel up
-            if curr_desk < config.desk_count - 1:
-                curr_desk += 1
-
-        desk_info.go_to_desk(curr_desk + 1)
-        super(DeskNumKeysWidget, self).wheelEvent(event)
