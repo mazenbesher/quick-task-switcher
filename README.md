@@ -12,10 +12,16 @@
 
 - [x] system tray icon
 - [ ] implement extension system with sample extensions:
-    - [ ] music control
+  - [ ] music control
 - [ ] improve packaging with a custom name and parameters
 - [ ] support more than 9 desktops
 - [ ] minimize
+- [ ] customize desktop
+  - [ ] color button on tray icon
+  - [ ] custom background
+- [ ] desktops overview
+- [ ] use github actions for packaging
+- [ ] option to transparent window background
 
 # Packaging
 
