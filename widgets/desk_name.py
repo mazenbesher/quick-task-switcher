@@ -36,12 +36,13 @@ class DeskNameLabel(QtWidgets.QLabel):
     def currDeskNameChanged(self):
         # add name to history
         new_desk_name = config.json_config.desktop_names[config.curr_desk - 1]
-        config.json_config.desktop_names_history.append(new_desk_name)
+        if new_desk_name not in config.json_config.desktop_names_history:
+            config.json_config.desktop_names_history.append(new_desk_name)
 
-        # remove old entries if applicable
-        max_size = config.json_config.desktop_names_history_max_size
-        if len(config.json_config.desktop_names_history) > max_size:
-            del config.json_config.desktop_names_history[:-max_size]
+            # remove old entries if applicable
+            max_size = config.json_config.desktop_names_history_max_size
+            if len(config.json_config.desktop_names_history) > max_size:
+                del config.json_config.desktop_names_history[:-max_size]
 
         self.updateText()
 
