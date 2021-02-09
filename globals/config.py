@@ -27,7 +27,7 @@ class JSONConfig:
     desktop_names: List[str] = field(default_factory=lambda: [f'Desktop {i}' for i in range(1, 10)])
 
     # desktop name history
-    desktop_names_history_max_size: int = 2
+    desktop_names_history_max_size: int = 20
     desktop_names_history: List[str] = field(default_factory=lambda: [])
 
     #

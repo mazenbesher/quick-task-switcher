@@ -23,12 +23,10 @@ In the project directory execute:
 
 ```powershell
 poetry install 
-poetry run pyinstaller main.py
-cp .\config.json .\dist\main
-cp -r .\assets .\dist\main
-mkdir -p .\dist\main\utils\desk_manager
-cp .\utils\desk_manager\VirtualDesktopAccessor.dll .\dist\main\utils\desk_manager\
+poetry run pyinstaller quick_task_switch.spec
 ```
+
+Then open the `Quick Task Switcher.exe` under `dist\Quick Task Switcher`
 
 # Attribution
 

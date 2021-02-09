@@ -15,7 +15,7 @@ def validate_config():
 
     for desk_name in config.json_config.desktop_names + config.json_config.desktop_names_history:
         # TODO: 3 magic number
-        assert 3 <= len(desk_name) <= config.json_config.desktop_names_history_max_size
+        assert 3 <= len(desk_name) <= config.json_config.desk_name_char_limit
 
 
 def load_json_config():
