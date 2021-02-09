@@ -1,7 +1,9 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config
+from menus import GoToMenu
 from widgets import MainWidget
+from widgets.desk_name import DeskNameLabel
 from .help import HelpWindow
 
 
@@ -86,6 +88,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
         menu = QtWidgets.QMenu(self)
+
+        rename_action = menu.addAction("Rename current desktop")
+        rename_action.triggered.connect(self.findChild(DeskNameLabel).changeCurrDeskName)
+
+        goto_submenu = GoToMenu(parent=menu)
+        menu.addMenu(goto_submenu)
+
         quit_action = menu.addAction("Quit")
         quit_action.triggered.connect(self.closeEvent)
+
         menu.exec_(self.mapToGlobal(event.pos()))

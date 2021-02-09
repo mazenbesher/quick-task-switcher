@@ -3,7 +3,8 @@ import sys
 from PyQt5 import QtWidgets
 
 from globals import config
-from utils import tray, config_manager
+from utils import config_manager
+from widgets.tray import TrayWidget
 from windows import MainWindow
 
 
@@ -30,21 +31,7 @@ def main():
     config.quit_func = quit_func
 
     # system tray
-    config.tray = tray.create()
-
-    # add the menu to the tray
-    tray_menu = QtWidgets.QMenu()
-    config.tray.setContextMenu(tray_menu)
-
-    # add center main window action
-    center_main_win_action = QtWidgets.QAction("Center Window")
-    center_main_win_action.triggered.connect(main_window.center)
-    tray_menu.addAction(center_main_win_action)
-
-    # add quit action to system tray
-    quit_action = QtWidgets.QAction("Quit")
-    quit_action.triggered.connect(config.quit_func)
-    tray_menu.addAction(quit_action)
+    config.tray = TrayWidget(main_window)
 
     sys.exit(app.exec_())
 
