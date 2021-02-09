@@ -23,7 +23,7 @@ In the project directory execute:
 
 ```powershell
 poetry install 
-poetry run pyinstaller quick_task_switch.spec
+poetry run pyinstaller quick_task_switcher.spec
 ```
 
 Then open the `Quick Task Switcher.exe` under `dist\Quick Task Switcher`
