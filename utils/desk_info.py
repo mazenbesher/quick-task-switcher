@@ -1,8 +1,6 @@
 from typing import Tuple
 
-from PyQt5 import QtGui
-
-from globals import signals, config, iconPaths
+from globals import signals, config
 from utils import desk_manager
 
 
@@ -77,6 +75,17 @@ def update(desk_count: int = None, curr_desk: int = None):
 
     if update_curr_desk(curr_desk):
         # new desk actions
-        if config.tray is not None:
-            config.tray.setIcon(QtGui.QIcon(iconPaths.desk(config.curr_desk)))
         signals.currDeskChanged.emit()
+
+
+def create_go_to_desk_func(desk_num: int):
+    """
+    :param desk_num: 1-based indexing
+    :return:
+    """
+
+    def fn():
+        if desk_num <= config.desk_count and desk_num != config.curr_desk:
+            go_to_desk(desk_num)
+
+    return fn

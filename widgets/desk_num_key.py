@@ -1,8 +1,8 @@
 import keyboard
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtWidgets
 
-from utils import desk_info, desk_manager
 from globals import signals, config
+from utils import desk_info
 
 
 class DeskNumKeysWidget(QtWidgets.QWidget):
@@ -32,7 +32,7 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
             desk_num_btn.setToolTip(config.json_config.desktop_names[btn_desk_num - 1])
 
             # add click handler
-            desk_num_btn.clicked.connect(self.onDeskNumClick(btn_desk_num))
+            desk_num_btn.clicked.connect(desk_info.create_go_to_desk_func(btn_desk_num))
 
             # add to layout
             layout.addWidget(desk_num_btn)
@@ -95,9 +95,3 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
 
     def newDeskCount(self, desk_count: int):
         self.updateBtnsDisabledState()
-
-    def onDeskNumClick(self, desk_num: int):
-        def onClick():
-            desk_info.go_to_desk(desk_num)
-
-        return onClick
