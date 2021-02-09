@@ -92,6 +92,3 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
                 desk_num_btn.setProperty("inactive", True)
             else:
                 desk_num_btn.setProperty("inactive", False)
-
-    def newDeskCount(self, desk_count: int):
-        self.updateBtnsDisabledState()

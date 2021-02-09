@@ -86,6 +86,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.set_titlebar_state_from_config()
             self.show()
 
+        # M to minimize
+        if event.key() == QtCore.Qt.Key_M:
+            self.hide()
+
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
         menu = QtWidgets.QMenu(self)
 
@@ -94,6 +98,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         goto_submenu = GoToMenu(parent=menu)
         menu.addMenu(goto_submenu)
+
+        hide_action = menu.addAction('Minimize/Hide')
+        hide_action.triggered.connect(self.hide)
 
         quit_action = menu.addAction("Quit")
         quit_action.triggered.connect(self.closeEvent)

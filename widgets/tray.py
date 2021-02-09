@@ -42,12 +42,19 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
         self.tray_menu.addAction(self.quit_action)
 
         # signals
+        self.activated.connect(self.onActivation)
         signals.currDeskChanged.connect(self.updateIcon)
         signals.currDeskNameChanged.connect(self.updateDeskName)
 
         # initial updates
         self.updateIcon()
         self.updateDeskName()
+
+    @QtCore.pyqtSlot()
+    def onActivation(self):
+        # show main window if hidden (aka minimized)
+        if not self.parent().isVisible():
+            self.parent().show()
 
     @QtCore.pyqtSlot()
     def updateIcon(self):
