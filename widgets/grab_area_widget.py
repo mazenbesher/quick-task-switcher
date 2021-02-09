@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from globals import config
 
 
-class GrabWidget(QtWidgets.QWidget):
+class GrabAreaWidget(QtWidgets.QWidget):
     def __init__(self, parent, grab_button: QtCore.Qt.MouseButton = QtCore.Qt.LeftButton,
                  move_target: QtWidgets.QWidget = None):
         super().__init__(parent)
@@ -12,7 +12,7 @@ class GrabWidget(QtWidgets.QWidget):
         self.grab_button = grab_button
 
         self.setToolTip("Drag to move window")
-        self.setObjectName("GrabWidget")
+        self.setObjectName("GrabAreaWidget")
 
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -38,7 +38,7 @@ class GrabWidget(QtWidgets.QWidget):
             self.__mousePressPos = event.globalPos()
             self.__mouseMovePos = event.globalPos()
 
-        super(GrabWidget, self).mouseMoveEvent(event)
+        super(GrabAreaWidget, self).mouseMoveEvent(event)
 
     def mouseMoveEvent(self, event):
         if event.buttons() == self.grab_button:
@@ -51,7 +51,7 @@ class GrabWidget(QtWidgets.QWidget):
 
             self.__mouseMovePos = global_pos
 
-        super(GrabWidget, self).mouseMoveEvent(event)
+        super(GrabAreaWidget, self).mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
         if self.__mousePressPos is not None:
@@ -60,4 +60,4 @@ class GrabWidget(QtWidgets.QWidget):
                 event.ignore()
                 return
 
-        super(GrabWidget, self).mouseMoveEvent(event)
+        super(GrabAreaWidget, self).mouseMoveEvent(event)

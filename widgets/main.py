@@ -1,11 +1,11 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 
-from utils import desk_info, desk_manager
 from globals import config, signals
-from .desk_num_key import DeskNumKeysWidget
+from utils import desk_info, desk_manager
 from .desk_name import DeskNameLabel
+from .desk_num_key import DeskNumKeysWidget
 from .desk_timer import DeskTimerLabel
-from .grab_widget import GrabWidget
+from .grab_area_widget import GrabAreaWidget
 
 
 class MainWidget(QtWidgets.QWidget):
@@ -37,7 +37,7 @@ class MainWidget(QtWidgets.QWidget):
         # desk name and timer on the same line
         sublayout = QtWidgets.QHBoxLayout()
         sublayout.addWidget(DeskNameLabel(self), alignment=QtCore.Qt.AlignLeft)
-        sublayout.addWidget(GrabWidget(self), alignment=QtCore.Qt.AlignCenter)
+        sublayout.addWidget(GrabAreaWidget(self), alignment=QtCore.Qt.AlignCenter)
         sublayout.addWidget(DeskTimerLabel(self), alignment=QtCore.Qt.AlignRight)
         sublayout.setSpacing(0)
         sublayout.setContentsMargins(0, 0, 0, 0)
