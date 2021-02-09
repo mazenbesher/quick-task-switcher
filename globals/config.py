@@ -18,7 +18,7 @@ class JSONConfig:
     check_interval: int = 1000
 
     # main window title bar status
-    titlebar_hidden: bool = False
+    titlebar_hidden: bool = True
 
     # desk name char limit
     desk_name_char_limit: int = 50
@@ -35,6 +35,10 @@ class JSONConfig:
 
     # grab area min width and height
     grab_area_min_size: Tuple[int, int] = (20, 10)
+
+    # number of desktops
+    # TODO: use this variable where appropriate instead of hard-coded values
+    desktops_number: int = 9
 
 
 class Config:
