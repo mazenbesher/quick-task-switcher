@@ -251,4 +251,4 @@ dmypy.json
 .idea
 poetry.lock
 config.json
-!quick_task_switch.spec
+!quick_task_switcher.spec
