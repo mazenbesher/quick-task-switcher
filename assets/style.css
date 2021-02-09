@@ -40,10 +40,12 @@ QPushButton#DeskNumBtn {
 
 QPushButton#DeskNumBtn[active=true] {
     background-color: yellow;
-
-    border-width: 1px;
-    border-style: solid;
     border-color: black;
+}
+
+QPushButton#DeskNumBtn[inactive=true] {
+    color: gray;
+    border-color: gray;
 }
 
 QPushButton#DeskNumBtn:disabled {

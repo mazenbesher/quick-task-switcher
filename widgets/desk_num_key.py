@@ -88,9 +88,10 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
 
             # disable state
             if btn_desk_num > config.desk_count:
-                desk_num_btn.setDisabled(True)
+                # setDisabled is not used to allow context menu (right click) pass through
+                desk_num_btn.setProperty("inactive", True)
             else:
-                desk_num_btn.setDisabled(False)
+                desk_num_btn.setProperty("inactive", False)
 
     def newDeskCount(self, desk_count: int):
         self.updateBtnsDisabledState()
