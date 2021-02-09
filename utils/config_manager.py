@@ -4,14 +4,18 @@ from globals import config, JSONConfig
 
 
 def validate_config():
-    assert len(config.json_config.desktop_names) == 9
+    assert len(config.json_config.desktop_names) == config.json_config.desktops_number
     assert len(config.json_config.desktop_names_history) <= config.json_config.desktop_names_history_max_size
-    assert 0 < config.json_config.main_window_opacity <= 1
+    assert 0.0 < config.json_config.main_window_opacity <= 1.0
     assert config.json_config.grab_area_min_size[0] > 0
     assert config.json_config.grab_area_min_size[1] > 0
     assert len(config.json_config.config_path) != 0
     assert config.json_config.desk_name_char_limit > 0
     assert config.json_config.check_interval > 10
+
+    for desk_name in config.json_config.desktop_names + config.json_config.desktop_names_history:
+        # TODO: 3 magic number
+        assert 3 <= len(desk_name) <= config.json_config.desktop_names_history_max_size
 
 
 def load_json_config():
