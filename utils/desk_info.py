@@ -5,11 +5,7 @@ from utils import desk_manager
 
 
 def go_to_desk(desk_num: int):
-    """
-    :param desk_num: one-based index
-    :return:
-    """
-    desk_manager.go_to_desk_number(desk_num - 1)
+    desk_manager.go_to_desk_number(desk_num)
     update(None, desk_num)
 
 
@@ -48,7 +44,7 @@ def update_curr_desk(curr_desk: int = None):
 
     # update curr desk
     if curr_desk is None:
-        config.curr_desk = desk_manager.get_curr_desktop_number() + 1
+        config.curr_desk = desk_manager.get_curr_desktop_number()
     else:
         config.curr_desk = curr_desk
 
@@ -79,11 +75,6 @@ def update(desk_count: int = None, curr_desk: int = None):
 
 
 def create_go_to_desk_func(desk_num: int):
-    """
-    :param desk_num: 1-based indexing
-    :return:
-    """
-
     def fn():
         if desk_num <= config.desk_count and desk_num != config.curr_desk:
             go_to_desk(desk_num)

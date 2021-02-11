@@ -1,3 +1,15 @@
+# Intro
+
+TODO
+
+# Demo
+
+TODO
+
+# Docs
+
+TODO
+
 # Links
 
 - VirtualDesktopAccessor: https://github.com/Ciantic/VirtualDesktopAccessor
@@ -11,25 +23,6 @@
 ## Tutorials
 
 - Packaging: https://www.learnpyqt.com/tutorials/packaging-pyqt5-pyside2-applications-windows-pyinstaller/
-
-# TODOS
-
-- [x] system tray icon
-- [ ] implement extension system with sample extensions:
-  - [ ] music control
-- [ ] improve packaging with a custom name and parameters
-- [ ] support more than 9 desktops
-- [ ] minimize
-- [ ] customize desktop
-  - [ ] color button on tray icon
-  - [ ] custom background
-- [ ] desktops overview
-- [ ] use github actions for packaging
-- [ ] option to transparent window background
-- [ ] build web interface for usage
-- [ ] add ability to change desktops order
-- [ ] panadora timer
-- [ ] change desktop indexing to zero-based
 
 # Packaging
 
@@ -45,8 +38,6 @@ the `quick_task_switcher_onefile.spec` instead.
 
 # Attribution
 
-- Tray Icons: by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under
-  a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
-- The `utils/desk_manager` subpackage make use of `VirtualDesktopAccessor.dll` create
-  by [Jari Pennanen](https://github.com/Ciantic)
+- Tray Icons: by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
+- The `utils/desk_manager` subpackage make use of `VirtualDesktopAccessor.dll` create by [Jari Pennanen](https://github.com/Ciantic)
   

@@ -45,8 +45,8 @@ class Config:
     # info about current desktop
     desk_count: int = None
     prev_desk_count: int = None
-    curr_desk: int = None  # 1-based index
-    prev_curr_desk: int = None  # 1-based index
+    curr_desk: int = None
+    prev_curr_desk: int = None
 
     #
     tray: QtWidgets.QSystemTrayIcon = None

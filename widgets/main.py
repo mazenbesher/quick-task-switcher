@@ -67,41 +67,8 @@ class MainWidget(QtWidgets.QWidget):
             if curr_desk > 0:
                 curr_desk -= 1
         else:  # wheel up
-            if curr_desk < config.desk_count - 1:
+            if curr_desk < config.desk_count:
                 curr_desk += 1
 
-        desk_info.go_to_desk(curr_desk + 1)
+        desk_info.go_to_desk(curr_desk)
         super(MainWidget, self).wheelEvent(event)
-
-    # Grabbable (can be moved using the grabButton) main widget
-
-    # def mousePressEvent(self, event):
-    #     self.__mousePressPos = None
-    #     self.__mouseMovePos = None
-    #     if event.button() == self.grabButton:
-    #         self.__mousePressPos = event.globalPos()
-    #         self.__mouseMovePos = event.globalPos()
-    #
-    #     super(MainWidget, self).mouseMoveEvent(event)
-    #
-    # def mouseMoveEvent(self, event):
-    #     if event.buttons() == self.grabButton:
-    #         # adjust offset from clicked point to origin of widget
-    #         currPos = self.mapToGlobal(self.parent().pos())
-    #         globalPos = event.globalPos()
-    #         diff = globalPos - self.__mouseMovePos
-    #         newPos = self.mapFromGlobal(currPos + diff)
-    #         self.parent().move(newPos)
-    #
-    #         self.__mouseMovePos = globalPos
-    #
-    #     super(MainWidget, self).mouseMoveEvent(event)
-    #
-    # def mouseReleaseEvent(self, event):
-    #     if self.__mousePressPos is not None:
-    #         moved = event.globalPos() - self.__mousePressPos
-    #         if moved.manhattanLength() > 3:
-    #             event.ignore()
-    #             return
-    #
-    #     super(MainWidget, self).mouseMoveEvent(event)

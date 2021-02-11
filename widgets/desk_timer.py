@@ -13,7 +13,7 @@ class DeskTimerLabel(QtWidgets.QLabel):
         for desk_idx in range(config.desk_count):
             desk_name = config.json_config.desktop_names[desk_idx]
             watch = StopWatch(desk_name)
-            if desk_idx == config.curr_desk - 1:
+            if desk_idx == config.curr_desk:
                 # start watch on current desktop
                 watch.start()
             self.timers.append(watch)
@@ -42,13 +42,13 @@ class DeskTimerLabel(QtWidgets.QLabel):
     def desktopChanged(self):
         # if not moving from closed desktop
         if config.prev_curr_desk is not None and \
-                config.prev_curr_desk - 1 < len(self.timers) and \
-                self.timers[config.prev_curr_desk - 1].running:
+                config.prev_curr_desk < len(self.timers) and \
+                self.timers[config.prev_curr_desk].running:
             # pause prev desktop watch
-            self.timers[config.prev_curr_desk - 1].pause()
+            self.timers[config.prev_curr_desk].pause()
 
         # resume new desktop watch
-        self.timers[config.curr_desk - 1].start()
+        self.timers[config.curr_desk].start()
 
         # show
         self.updateText()
@@ -62,9 +62,9 @@ class DeskTimerLabel(QtWidgets.QLabel):
     @QtCore.pyqtSlot()
     def deskClosed(self):
         # remove closed desktop watch
-        closed_desk_id = config.curr_desk - 1
+        closed_desk_id = config.curr_desk
         print(f'closed_desk_id: {closed_desk_id}')
         del self.timers[closed_desk_id]
 
     def updateText(self):
-        self.setText(self.timers[config.curr_desk - 1].get_elapsed_formatted())
+        self.setText(self.timers[config.curr_desk].get_elapsed_formatted())

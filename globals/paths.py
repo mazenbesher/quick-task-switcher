@@ -6,7 +6,7 @@ class IconsPaths:
     start = resource_path(f'{path_base}/start.png')
 
     def desk(self, desk_num: int):
-        return resource_path(f'{self.path_base}/desk{desk_num}.png')
+        return resource_path(f'{self.path_base}/desk{desk_num + 1}.png')
 
 
 iconPaths = IconsPaths()

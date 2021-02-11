@@ -25,17 +25,18 @@ class DeskNameLabel(QtWidgets.QLabel):
     @QtCore.pyqtSlot()
     def deskClosed(self):
         # shift desktop names by one
-        closed_desk_id = config.curr_desk - 1
+        closed_desk_id = config.curr_desk
 
-        for desk_id in range(closed_desk_id, config.desk_count - 1):
-            print(
-                f'renaming desktop {desk_id} from {config.json_config.desktop_names[desk_id]} to {config.json_config.desktop_names[desk_id + 1]}')
+        for desk_id in range(closed_desk_id, config.desk_count):
+            print(f'renaming desktop with id {desk_id} '
+                  f'from {config.json_config.desktop_names[desk_id]} '
+                  f'to {config.json_config.desktop_names[desk_id + 1]}')
             config.json_config.desktop_names[desk_id] = config.json_config.desktop_names[desk_id + 1]
 
     @QtCore.pyqtSlot()
     def currDeskNameChanged(self):
         # add name to history
-        new_desk_name = config.json_config.desktop_names[config.curr_desk - 1]
+        new_desk_name = config.json_config.desktop_names[config.curr_desk]
         if new_desk_name not in config.json_config.desktop_names_history:
             config.json_config.desktop_names_history.append(new_desk_name)
 
@@ -48,7 +49,7 @@ class DeskNameLabel(QtWidgets.QLabel):
 
     @QtCore.pyqtSlot()
     def updateText(self):
-        self.setText(config.json_config.desktop_names[config.curr_desk - 1])
+        self.setText(config.json_config.desktop_names[config.curr_desk])
 
     def mousePressEvent(self, ev: QtGui.QMouseEvent) -> None:
         if ev.button() == QtCore.Qt.LeftButton:
@@ -56,7 +57,7 @@ class DeskNameLabel(QtWidgets.QLabel):
 
     def changeCurrDeskName(self):
         # change current desktop name
-        curr_desk_name = config.json_config.desktop_names[config.curr_desk - 1]
+        curr_desk_name = config.json_config.desktop_names[config.curr_desk]
 
         # create input dialog with editable combobox from previous desktops
         options = [curr_desk_name] + config.json_config.desktop_names_history
@@ -84,7 +85,7 @@ class DeskNameLabel(QtWidgets.QLabel):
 
             # change name!
             if valid_name:
-                config.json_config.desktop_names[config.curr_desk - 1] = new_desk_name_input
+                config.json_config.desktop_names[config.curr_desk] = new_desk_name_input
 
                 # publish
                 signals.currDeskNameChanged.emit()

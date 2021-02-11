@@ -15,7 +15,7 @@ class GoToMenu(QtWidgets.QMenu):
             goto_action = QtWidgets.QAction(f"Desktop {desk_idx + 1}: {desk_name}")
             if desk_idx >= config.desk_count:
                 goto_action.setDisabled(True)
-            goto_action.triggered.connect(desk_info.create_go_to_desk_func(desk_idx + 1))
+            goto_action.triggered.connect(desk_info.create_go_to_desk_func(desk_idx))
             self.addAction(goto_action)
             self.actions.append(goto_action)
 
@@ -31,9 +31,9 @@ class GoToMenu(QtWidgets.QMenu):
     @QtCore.pyqtSlot()
     def updateCurrDeskLabel(self):
         # update goto submenu text
-        curr_desk_name = config.json_config.desktop_names[config.curr_desk - 1]
+        curr_desk_name = config.json_config.desktop_names[config.curr_desk]
         txt = f'Desktop {config.curr_desk}: {curr_desk_name}'
-        self.actions[config.curr_desk - 1].setText(txt)
+        self.actions[config.curr_desk].setText(txt)
 
     @QtCore.pyqtSlot()
     def updateDisabledStates(self):

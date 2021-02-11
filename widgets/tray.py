@@ -66,6 +66,6 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
     @QtCore.pyqtSlot()
     def updateDeskName(self):
         # set desktop name in the first menu entry
-        curr_desk_name = config.json_config.desktop_names[config.curr_desk - 1]
+        curr_desk_name = config.json_config.desktop_names[config.curr_desk]
         txt = f'Desktop {config.curr_desk}: {curr_desk_name}'
         self.desk_name_action.setText(txt)

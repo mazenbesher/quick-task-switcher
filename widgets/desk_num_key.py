@@ -22,17 +22,17 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
 
         # desk num buttons
         self.desk_num_btns = []
-        for btn_desk_num in range(1, 10):
-            desk_num_btn = QtWidgets.QPushButton(str(btn_desk_num))
+        for desk_idx in range(config.json_config.desktops_number):
+            desk_num_btn = QtWidgets.QPushButton(str(desk_idx + 1))
 
             # set object name
             desk_num_btn.setObjectName("DeskNumBtn")
 
             # set tooltip to desktop name
-            desk_num_btn.setToolTip(config.json_config.desktop_names[btn_desk_num - 1])
+            desk_num_btn.setToolTip(config.json_config.desktop_names[desk_idx])
 
             # add click handler
-            desk_num_btn.clicked.connect(desk_info.create_go_to_desk_func(btn_desk_num))
+            desk_num_btn.clicked.connect(desk_info.create_go_to_desk_func(desk_idx))
 
             # add to layout
             layout.addWidget(desk_num_btn)
@@ -59,8 +59,7 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
 
     @QtCore.pyqtSlot()
     def updateCurrDeskBtnTooltip(self):
-        curr_desk_id = config.curr_desk - 1
-        self.desk_num_btns[curr_desk_id].setToolTip(config.json_config.desktop_names[curr_desk_id])
+        self.desk_num_btns[config.curr_desk].setToolTip(config.json_config.desktop_names[config.curr_desk])
 
     def newDesk(self):
         keyboard.press_and_release('ctrl+win+d')
@@ -69,10 +68,10 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
     @QtCore.pyqtSlot()
     def updateBtnsColor(self):
         for desk_num_btn in self.desk_num_btns:
-            btn_desk_num = int(desk_num_btn.text())
+            desk_idx = int(desk_num_btn.text()) - 1
 
             # active state (for styling)
-            if config.curr_desk == btn_desk_num:
+            if config.curr_desk == desk_idx:
                 desk_num_btn.setProperty('active', True)
             else:
                 desk_num_btn.setProperty('active', False)
