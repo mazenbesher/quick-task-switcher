@@ -1,15 +1,20 @@
+from typing import Optional
+
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config
 from menus import GoToMenu
+from web.backend import Server
 from widgets import MainWidget
 from widgets.desk_name import DeskNameLabel
 from .help import HelpWindow
+from .web import WebWindow
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent=None, backend_server: Optional[Server] = None) -> None:
         super(MainWindow, self).__init__(parent)
+        self.backend_server = backend_server
 
         # title
         self.setWindowTitle("Quick Task Switcher")
@@ -28,8 +33,9 @@ class MainWindow(QtWidgets.QMainWindow):
         main_widget = MainWidget(self)
         self.setCentralWidget(main_widget)
 
-        # help window
+        # other [helper] windows
         self.help_win = HelpWindow(self)
+        self.web_win = WebWindow(self)
 
         # show
         self.show()
@@ -90,6 +96,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if event.key() == QtCore.Qt.Key_M:
             self.hide()
 
+        # D to open API docs
+        if event.key() == QtCore.Qt.Key_D:
+            if self.backend_server is not None:
+                self.backend_server.open_docs()
+            else:
+                QtWidgets.QMessageBox.critical(self, "Docs not available", "Backend server is not running!")
+
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
         menu = QtWidgets.QMenu(self)
 
@@ -98,6 +111,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         goto_submenu = GoToMenu(parent=menu)
         menu.addMenu(goto_submenu)
+
+        open_web = menu.addAction("Open web interface")
+        open_web.triggered.connect(self.web_win.reload_and_show)
 
         hide_action = menu.addAction('Minimize/Hide')
         hide_action.triggered.connect(self.hide)

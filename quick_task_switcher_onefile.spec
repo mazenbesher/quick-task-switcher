@@ -1,4 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import get_package_paths, collect_submodules
 
 block_cipher = None
 
@@ -8,9 +9,12 @@ a = Analysis(['main.py'],
              datas=[
                  (r'.\assets\style.css', r'.\assets'),
                  (r'.\assets\tray_icon\*', r'.\assets\tray_icon'),
-                 (r'.\utils\desk_manager\VirtualDesktopAccessor.dll', r'utils\desk_manager'),
+                 (r'.\utils\desk_manager\VirtualDesktopAccessor.dll', r'.\utils\desk_manager'),
+                 (r'.\web\frontend\dist\*', r'.\web\frontend\dist'),
+                 (get_package_paths('uvicorn')[1], 'uvicorn')
              ],
-             hiddenimports=[],
+             # https://stackoverflow.com/questions/64281002/pyinstaller-compiled-uvicorn-server-does-not-start-correctly
+             hiddenimports=collect_submodules('uvicorn'),
              hookspath=[],
              runtime_hooks=[],
              excludes=[],

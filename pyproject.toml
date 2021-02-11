@@ -9,6 +9,9 @@ python = "^3.9.1"
 PyQt5 = "^5.15.2"
 keyboard = "^0.13.5"
 dataclasses-json = "^0.5.2"
+PyQtWebEngine = "^5.15.2"
+fastapi = "^0.63.0"
+uvicorn = "^0.13.3"
 
 [tool.poetry.dev-dependencies]
 pyinstaller = "^4.2"

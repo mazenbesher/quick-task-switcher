@@ -59,6 +59,9 @@ class Config:
     #
     quit_func = None
 
+    # backend port
+    backend_port: int = 56789
+
     #
     json_config = JSONConfig()
 
