@@ -9,14 +9,15 @@ class DeskTimerLabel(QtWidgets.QLabel):
         super(DeskTimerLabel, self).__init__(parent)
 
         # timer for each desktop
-        self.timers = []
+        assert config.timers is None
+        config.timers = []
         for desk_idx in range(config.desk_count):
             desk_name = config.json_config.desktop_names[desk_idx]
             watch = StopWatch(desk_name)
             if desk_idx == config.curr_desk:
                 # start watch on current desktop
                 watch.start()
-            self.timers.append(watch)
+            config.timers.append(watch)
 
         # set name (for css ref for instance)
         self.setObjectName("DeskTimerLabel")
@@ -42,13 +43,13 @@ class DeskTimerLabel(QtWidgets.QLabel):
     def desktopChanged(self):
         # if not moving from closed desktop
         if config.prev_curr_desk is not None and \
-                config.prev_curr_desk < len(self.timers) and \
-                self.timers[config.prev_curr_desk].running:
+                config.prev_curr_desk < len(config.timers) and \
+                config.timers[config.prev_curr_desk].running:
             # pause prev desktop watch
-            self.timers[config.prev_curr_desk].pause()
+            config.timers[config.prev_curr_desk].pause()
 
         # resume new desktop watch
-        self.timers[config.curr_desk].start()
+        config.timers[config.curr_desk].start()
 
         # show
         self.updateText()
@@ -57,14 +58,14 @@ class DeskTimerLabel(QtWidgets.QLabel):
     def newDesk(self):
         # add new watch for the new desktop
         # Note: new desktops are always add at the end
-        self.timers.append(StopWatch())
+        config.timers.append(StopWatch())
 
     @QtCore.pyqtSlot()
     def deskClosed(self):
         # remove closed desktop watch
         closed_desk_id = config.curr_desk
         print(f'closed_desk_id: {closed_desk_id}')
-        del self.timers[closed_desk_id]
+        del config.timers[closed_desk_id]
 
     def updateText(self):
-        self.setText(self.timers[config.curr_desk].get_elapsed_formatted())
+        self.setText(config.timers[config.curr_desk].get_elapsed_formatted())

@@ -4,6 +4,8 @@ from typing import Tuple, List
 from PyQt5 import QtWidgets
 from dataclasses_json import dataclass_json
 
+from utils.stopwatch import StopWatch
+
 
 @dataclass_json
 @dataclass
@@ -47,6 +49,9 @@ class Config:
     prev_desk_count: int = None
     curr_desk: int = None
     prev_curr_desk: int = None
+
+    # desktops timers
+    timers: List[StopWatch] = None
 
     #
     tray: QtWidgets.QSystemTrayIcon = None
