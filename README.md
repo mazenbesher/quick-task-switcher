@@ -26,10 +26,17 @@ TODO
 
 # Packaging
 
-In the project directory execute:
+Make sure you have [`poetry`](https://python-poetry.org/) and [`yarn`](https://yarnpkg.com/) installed. In the project
+directory execute:
 
 ```powershell
-poetry install 
+poetry install
+ 
+cd web/frontend/
+yarn install
+yarn build
+
+cd ../..
 poetry run pyinstaller quick_task_switcher.spec
 ```
 
@@ -38,6 +45,7 @@ the `quick_task_switcher_onefile.spec` instead.
 
 # Attribution
 
-- Tray Icons: by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
-- The `utils/desk_manager` subpackage make use of `VirtualDesktopAccessor.dll` create by [Jari Pennanen](https://github.com/Ciantic)
-  
+- Tray Icons: by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under
+  a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
+- The `utils/desk_manager` subpackage make use of `VirtualDesktopAccessor.dll` create
+  by [Jari Pennanen](https://github.com/Ciantic)
