@@ -6,6 +6,10 @@
 
 - System Tray: https://www.learnpyqt.com/tutorials/system-tray-mac-menu-bar-applications-pyqt/
 - QInputDialog: https://doc.qt.io/qt-5/qinputdialog.html
+- PyInstaller usage: https://pyinstaller.readthedocs.io/en/stable/usage.html
+
+## Tutorials
+
 - Packaging: https://www.learnpyqt.com/tutorials/packaging-pyqt5-pyside2-applications-windows-pyinstaller/
 
 # TODOS
@@ -22,6 +26,10 @@
 - [ ] desktops overview
 - [ ] use github actions for packaging
 - [ ] option to transparent window background
+- [ ] build web interface for usage
+- [ ] add ability to change desktops order
+- [ ] panadora timer
+- [ ] change desktop indexing to zero-based
 
 # Packaging
 
@@ -32,7 +40,8 @@ poetry install
 poetry run pyinstaller quick_task_switcher.spec
 ```
 
-Then open the `Quick Task Switcher.exe` under `dist\Quick Task Switcher`
+Then open the `Quick Task Switcher.exe` under `dist\Quick Task Switcher`. To generate single binary file use
+the `quick_task_switcher_onefile.spec` instead.
 
 # Attribution
 
