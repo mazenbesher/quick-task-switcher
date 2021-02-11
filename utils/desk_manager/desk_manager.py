@@ -3,7 +3,9 @@ import ctypes.wintypes
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Literal
+from typing import List
+
+from utils.paths import resource_path
 
 
 # from dataclasses_json import dataclass_json
@@ -33,7 +35,7 @@ psapi = ctypes.WinDLL('Psapi.dll')
 curr_path = Path(__file__).parent.absolute()
 vda_dll_name = 'VirtualDesktopAccessor.dll'
 vda_dll_path = curr_path / vda_dll_name
-vda = ctypes.cdll.LoadLibrary(str(vda_dll_path))
+vda = ctypes.cdll.LoadLibrary(resource_path(str(vda_dll_path)))
 
 default_excluded_apps_titles = [
     'Task View Controller',

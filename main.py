@@ -4,6 +4,7 @@ from PyQt5 import QtWidgets
 
 from globals import config
 from utils import config_manager
+from utils.paths import resource_path
 from widgets.tray import TrayWidget
 from windows import MainWindow
 
@@ -16,7 +17,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
 
     # set style sheet
-    with open('assets/style.css') as fp:
+    with open(resource_path('assets/style.css')) as fp:
         app.setStyleSheet(fp.read())
 
     # main window
