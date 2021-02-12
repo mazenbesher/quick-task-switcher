@@ -5,6 +5,7 @@ from utils import desk_manager
 
 
 def go_to_desk(desk_num: int):
+    assert 0 <= desk_num < config.desk_count
     desk_manager.go_to_desk_number(desk_num)
     update(None, desk_num)
 
@@ -76,7 +77,7 @@ def update(desk_count: int = None, curr_desk: int = None):
 
 def create_go_to_desk_func(desk_num: int):
     def fn():
-        if desk_num <= config.desk_count and desk_num != config.curr_desk:
+        if desk_num < config.desk_count and desk_num != config.curr_desk:
             go_to_desk(desk_num)
 
     return fn

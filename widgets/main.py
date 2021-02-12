@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config, signals
-from utils import desk_info, desk_manager
+from utils import desk_info
 from .desk_name import DeskNameLabel
 from .desk_num_key import DeskNumKeysWidget
 from .desk_timer import DeskTimerLabel
@@ -61,14 +61,12 @@ class MainWidget(QtWidgets.QWidget):
     def wheelEvent(self, event: QtGui.QWheelEvent) -> None:
         # wheel up or down
         down = event.angleDelta().y() < 0
-        curr_desk = desk_manager.get_curr_desktop_number()
 
         if down:
-            if curr_desk > 0:
-                curr_desk -= 1
+            if config.curr_desk > 0:
+                desk_info.go_to_desk(config.curr_desk - 1)
         else:  # wheel up
-            if curr_desk < config.desk_count:
-                curr_desk += 1
+            if config.curr_desk < config.desk_count - 1:
+                desk_info.go_to_desk(config.curr_desk + 1)
 
-        desk_info.go_to_desk(curr_desk)
         super(MainWidget, self).wheelEvent(event)
