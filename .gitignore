@@ -253,3 +253,4 @@ poetry.lock
 config.json
 !quick_task_switcher.spec
 !quick_task_switcher_onefile.spec
+tmp/*
