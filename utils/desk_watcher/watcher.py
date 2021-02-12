@@ -123,6 +123,7 @@ class DesktopWatcher:
     def register_desk_change_callback(self, callback: Callable):
         """
         Note: the callback is called one extra time when the watcher is stopped
+        Note: the callback function must be thread-safe (see utils.desk_info.update)
         """
         if self.desk_change_thread is not None:
             raise CallbackAlreadyRegistered
@@ -136,7 +137,9 @@ class DesktopWatcher:
     def register_desk_count_change_callback(self, callback: Callable):
         """
         Note: the callback is called one extra time when the watcher is stopped
+        Note: the callback function must be thread-safe (see utils.desk_info.update)
         """
+
         if self.desk_count_change_thread is not None:
             raise CallbackAlreadyRegistered
 

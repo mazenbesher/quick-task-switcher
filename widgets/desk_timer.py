@@ -71,4 +71,6 @@ class DeskTimerLabel(QtWidgets.QLabel):
         del config.timers[closed_desk_id]
 
     def updateText(self):
-        self.setText(config.timers[config.curr_desk].get_elapsed_formatted())
+        if config.curr_desk in config.timers:
+            # this can happen if new desk is added and the timer for the corresponding desk is not created yet
+            self.setText(config.timers[config.curr_desk].get_elapsed_formatted())

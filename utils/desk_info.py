@@ -1,7 +1,10 @@
+import threading
 from typing import Tuple
 
 from globals import signals, config
 from utils import desk_manager
+
+update_desk_info_lock = threading.Lock()
 
 
 def go_to_desk(desk_num: int):
@@ -62,6 +65,12 @@ def update_curr_desk(curr_desk: int = None):
 
 
 def update(desk_count: int = None, curr_desk: int = None):
+    # prevent race-condition to update desktop info multiple times from multiple threads
+    # this can happened because of the DeskWatcher class which uses two threads to monitor current and total number
+    # of virtual desktops
+    # both of these threads are connected to this function as callback
+    update_desk_info_lock.acquire(timeout=-1)
+
     new_desk, desk_closed = update_desk_count(desk_count)
     if new_desk:
         # new desk actions
@@ -73,6 +82,8 @@ def update(desk_count: int = None, curr_desk: int = None):
     if update_curr_desk(curr_desk):
         # new desk actions
         signals.currDeskChanged.emit()
+
+    update_desk_info_lock.release()
 
 
 def create_go_to_desk_func(desk_num: int):

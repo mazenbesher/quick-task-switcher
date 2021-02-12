@@ -27,6 +27,10 @@ class DeskNameLabel(QtWidgets.QLabel):
         # shift desktop names by one
         closed_desk_id = config.curr_desk
 
+        # if last desk is closed => do nothing
+        # if closed_desk_id == config.desk_count - 1:
+        #     return
+
         for desk_id in range(closed_desk_id, config.desk_count):
             print(f'renaming desktop with id {desk_id} '
                   f'from {config.json_config.desktop_names[desk_id]} '
