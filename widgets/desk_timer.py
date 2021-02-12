@@ -46,10 +46,13 @@ class DeskTimerLabel(QtWidgets.QLabel):
                 config.prev_curr_desk < len(config.timers) and \
                 config.timers[config.prev_curr_desk].running:
             # pause prev desktop watch
+            print(f'Pausing desktop {config.prev_curr_desk + 1}')
             config.timers[config.prev_curr_desk].pause()
 
         # resume new desktop watch
-        config.timers[config.curr_desk].start()
+        if not config.timers[config.curr_desk].running:
+            print(f'Resuming desktop {config.curr_desk + 1}')
+            config.timers[config.curr_desk].start()
 
         # show
         self.updateText()

@@ -1,9 +1,9 @@
 import sys
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 
 from globals import config
-from utils import config_manager
+from utils import config_manager, desk_watcher, desk_info
 from utils.paths import resource_path
 from web import backend
 from widgets.tray import TrayWidget
@@ -28,8 +28,27 @@ def main():
     # main window
     main_window = MainWindow(backend_server=server)
 
+    # setup desk change watcher (timer as fallback)
+    try:
+        timer = desk_watcher.DesktopWatcher()
+        timer.register_desk_change_callback(desk_info.update)
+        timer.register_desk_count_change_callback(desk_info.update)
+    except desk_watcher.RegKeysNotExist:
+        # timer fallback
+        QtWidgets.QMessageBox.warning(main_window, "Warning", "Can not register registry callbacks")
+
+        # refresh desk info each check_interval
+        timer = QtCore.QTimer()
+        timer.setInterval(config.json_config.check_interval)
+        timer.timeout.connect(desk_info.update)
+        timer.start()
+
     # quit function
     def quit_func():
+        # stop desk watcher
+        if timer is not None and type(timer) is desk_watcher.DesktopWatcher:
+            timer.stop()
+
         # stop backend server
         server.stop()
 

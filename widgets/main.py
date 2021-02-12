@@ -43,12 +43,6 @@ class MainWidget(QtWidgets.QWidget):
         sublayout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(sublayout)
 
-        # refresh desk info each check_interval
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(config.json_config.check_interval)
-        self.timer.timeout.connect(desk_info.update)
-        self.timer.start()
-
     def signalsDebugFn(self, event_name: str):
         def fn():
             msg = event_name
