@@ -11,7 +11,7 @@ class DeskTimerLabel(QtWidgets.QLabel):
         # timer for each desktop
         assert config.timers is None
         config.timers = []
-        for desk_idx in range(config.desk_count):
+        for desk_idx in range(config.json_config.desktops_number):
             desk_name = config.json_config.desktop_names[desk_idx]
             watch = StopWatch(desk_name)
             if desk_idx == config.curr_desk:
@@ -30,7 +30,6 @@ class DeskTimerLabel(QtWidgets.QLabel):
 
         # connect signals
         signals.currDeskChanged.connect(self.desktopChanged)
-        signals.newDesk.connect(self.newDesk)
         signals.deskClosed.connect(self.deskClosed)
 
         # refresh timer text each second
@@ -38,6 +37,13 @@ class DeskTimerLabel(QtWidgets.QLabel):
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.updateText)
         self.timer.start()
+
+    @QtCore.pyqtSlot()
+    def deskClosed(self):
+        closed_desk_id = config.curr_desk
+        if config.timers[closed_desk_id].running:
+            config.timers[closed_desk_id].pause()
+        config.timers[closed_desk_id].reset()
 
     @QtCore.pyqtSlot()
     def desktopChanged(self):
@@ -57,20 +63,5 @@ class DeskTimerLabel(QtWidgets.QLabel):
         # show
         self.updateText()
 
-    @QtCore.pyqtSlot()
-    def newDesk(self):
-        # add new watch for the new desktop
-        # Note: new desktops are always add at the end
-        config.timers.append(StopWatch())
-
-    @QtCore.pyqtSlot()
-    def deskClosed(self):
-        # remove closed desktop watch
-        closed_desk_id = config.curr_desk
-        print(f'closed_desk_id: {closed_desk_id}')
-        del config.timers[closed_desk_id]
-
     def updateText(self):
-        if config.curr_desk in config.timers:
-            # this can happen if new desk is added and the timer for the corresponding desk is not created yet
-            self.setText(config.timers[config.curr_desk].get_elapsed_formatted())
+        self.setText(config.timers[config.curr_desk].get_elapsed_formatted())

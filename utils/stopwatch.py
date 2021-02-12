@@ -26,6 +26,9 @@ class StopWatch():
         self.running = False
         self.start_time = None
 
+    def reset(self):
+        self.elapsed = 0
+
     def _add_elapsed(self):
         """start or pause time are going to be overwritten, thus add any elapsed time"""
         if self.start_time is not None and self.pause_time is not None:
