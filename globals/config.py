@@ -45,10 +45,14 @@ class JSONConfig:
 
 class Config:
     # info about current desktop
-    desk_count: int = None
-    prev_desk_count: int = None
-    curr_desk: int = None
-    prev_curr_desk: int = None
+    # initials: first desktop
+    curr_desk: int = 0
+    prev_curr_desk: int = 0
+
+    # info about total number of desktops
+    # initials: one virtual desktop
+    desk_count: int = 1
+    prev_desk_count: int = 1
 
     # desktops timers
     timers: List[StopWatch] = None
