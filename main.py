@@ -30,9 +30,9 @@ def main():
 
     # setup desk change watcher (timer as fallback)
     try:
-        timer = desk_watcher.DesktopWatcher()
-        timer.register_desk_change_callback(desk_info.update)
-        timer.register_desk_count_change_callback(desk_info.update)
+        timer = desk_watcher.DesktopWatcherQt()
+        timer.signals.desk_changed.connect(desk_info.update)
+        timer.signals.desk_count_changed.connect(desk_info.update)
     except desk_watcher.RegKeysNotExist:
         # timer fallback
         QtWidgets.QMessageBox.warning(main_window, "Warning", "Can not register registry callbacks")
@@ -46,8 +46,7 @@ def main():
     # quit function
     def quit_func():
         # stop desk watcher
-        if timer is not None and type(timer) is desk_watcher.DesktopWatcher:
-            timer.stop()
+        timer.stop()  # Note timer can be desk_watcher.DesktopWatcherQt or QtCore.QTimer
 
         # stop backend server
         server.stop()

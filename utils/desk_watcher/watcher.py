@@ -1,60 +1,12 @@
-"""
-Adapted from https://gist.github.com/mooware/3466bdb9e677c871f08165484a52f523
-"""
-
 import ctypes
 import ctypes.wintypes
 import threading
 import winreg
-from dataclasses import dataclass
 from typing import Callable, Optional
 
-
-@dataclass
-class RegConstants:
-    advapi32 = ctypes.windll.advapi32
-
-    HKEY_CURRENT_USER = ctypes.wintypes.HKEY(0x80000001)
-    KEY_NOTIFY = 0x0010
-    REG_NOTIFY_CHANGE_LAST_SET = 0x00000004
-    REG_DWORD = 4
-
-    # LSTATUS RegOpenKeyExA(HKEY hKey, LPCSTR lpSubKey, DWORD ulOptions, REGSAM samDesired, PHKEY phkResult)
-    RegOpenKeyExA = advapi32.RegOpenKeyExA
-    RegOpenKeyExA.argtypes = (
-        ctypes.wintypes.HKEY,
-        ctypes.wintypes.LPCSTR,
-        ctypes.wintypes.DWORD,
-        ctypes.wintypes.DWORD,
-        ctypes.wintypes.PHKEY
-    )
-
-    # https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regnotifychangekeyvalue
-    # LSTATUS RegNotifyChangeKeyValue(HKEY hKey, BOOL bWatchSubtree, DWORD dwNotifyFilter, HANDLE hEvent, BOOL fAsynchronous)
-    RegNotifyChangeKeyValue = advapi32.RegNotifyChangeKeyValue
-    RegNotifyChangeKeyValue.argtypes = (
-        ctypes.wintypes.HKEY,
-        ctypes.wintypes.BOOL,
-        ctypes.wintypes.DWORD,
-        ctypes.wintypes.HANDLE,
-        ctypes.wintypes.BOOL
-    )
-
-    # LSTATUS RegCloseKey(HKEY hKey)
-    RegCloseKey = advapi32.RegCloseKey
-    RegCloseKey.argtypes = (ctypes.wintypes.HKEY,)
-
-    # paths to virtual desktop related key in registry
-    all_vdesk_ids_key_path = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops'
-    curr_vdesk_id_key_path = r'Software\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\1\VirtualDesktops'
-
-
-class RegKeysNotExist(Exception):
-    pass
-
-
-class CallbackAlreadyRegistered(Exception):
-    pass
+from .constants import RegConstants
+from .exceptions import CallbackAlreadyRegistered, RegKeysNotExist
+from .utils import refresh_key
 
 
 class WaitRegChangeThread(threading.Thread):
@@ -77,33 +29,6 @@ class WaitRegChangeThread(threading.Thread):
             if res != 0: raise RuntimeError(f'RegNotifyChangeKeyValue failed, error {res}')
             self.callback()
             RegConstants.RegCloseKey(hdl)
-
-
-def refresh_key(key_path: str):
-    """
-    1. Open the key
-    2. Get default value (marked as "(Default)" in regedit) if exists
-    3. Set the key to random value => refresh any waiting notifier (via RegNotifyChangeKeyValue)
-    4. Set the key to default value from step 2
-    """
-    assert key_path in [
-        RegConstants.curr_vdesk_id_key_path,
-        RegConstants.all_vdesk_ids_key_path,
-    ]
-
-    key_handler = winreg.OpenKey(
-        winreg.HKEY_CURRENT_USER,
-        key_path,
-        0,
-        winreg.KEY_ALL_ACCESS
-    )
-    try:
-        def_val = winreg.QueryValueEx(key_handler, '')[0]
-    except FileNotFoundError:
-        def_val = ''
-    winreg.SetValueEx(key_handler, '', 0, winreg.REG_SZ, '\x12')
-    winreg.SetValueEx(key_handler, '', 0, winreg.REG_SZ, def_val)
-    winreg.CloseKey(key_handler)
 
 
 class DesktopWatcher:
@@ -170,21 +95,12 @@ if __name__ == "__main__":
 
     watcher = DesktopWatcher()
 
-
-    def desk_change_callback():
-        print('Desktop changed')
-
-
-    def desk_count_change_callback():
-        print('Desktop count changed')
-
-
     print('start')
-    watcher.register_desk_change_callback(desk_change_callback)
-    watcher.register_desk_count_change_callback(desk_count_change_callback)
+    watcher.register_desk_change_callback(lambda: print('Desktop changed'))
+    watcher.register_desk_count_change_callback(lambda: print('Desktop count changed'))
 
     print('wait')
-    time.sleep(10)
+    time.sleep(4)
 
     print('terminating')
     watcher.stop()
