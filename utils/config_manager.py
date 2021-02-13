@@ -14,8 +14,7 @@ def validate_config():
     assert config.json_config.check_interval > 10
 
     for desk_name in config.json_config.desktop_names + config.json_config.desktop_names_history:
-        # TODO: 3 magic number
-        assert 3 <= len(desk_name) <= config.json_config.desk_name_char_limit
+        assert 1 <= len(desk_name) <= config.json_config.desk_name_char_limit
 
 
 def load_json_config():
