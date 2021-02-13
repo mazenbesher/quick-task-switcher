@@ -4,6 +4,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config
 from menus import GoToMenu
+from utils import monitors
 from web.backend import Server
 from widgets import MainWidget
 from widgets.desk_name import DeskNameLabel
@@ -60,8 +61,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
     def center(self):
-        # TODO: hard coded coordinates!
-        self.move(300, 300)
+        first_monitor_center = monitors.get_in_view_loc()
+        x = first_monitor_center[0] - self.size().width() / 2
+        y = first_monitor_center[1] - self.size().height() / 2
+        self.move(x, y)
 
     def set_flags(self):
         flags = 0
