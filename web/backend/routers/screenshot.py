@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from mss import mss, tools
 from starlette.responses import StreamingResponse
 
-router = APIRouter(tags=['Screenshots'])
+router = APIRouter(tags=['Screenshots', 'Desktops'])
 
 
 @router.get('/', summary='Generate a screenshot of current desktop')

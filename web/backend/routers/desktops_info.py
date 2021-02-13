@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from globals import config
 
-router = APIRouter(tags=['Desktops Info'])
+router = APIRouter(tags=['Info', 'Desktops'])
 
 
 class DesktopInfo(BaseModel):

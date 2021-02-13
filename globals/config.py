@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import dataclass, field
 from typing import Tuple, List
 
@@ -65,6 +66,9 @@ class Config:
 
     # backend port
     backend_port: int = 56789
+
+    # up time
+    up_time: datetime.datetime = None
 
     #
     json_config = JSONConfig()

@@ -4,7 +4,7 @@ import {seconds_to_str} from './utils'
 const backend_addr = `http://127.0.0.1:${config.backend_port}`
 
 // get data
-const response = await fetch(`${backend_addr}/desktops_info`)
+const response = await fetch(`${backend_addr}/info/desktops`)
 const data = await response.json()
 const total_duration_seconds = data.map(info => info.duration_seconds).reduce((a, b) => a + b, 0)
 

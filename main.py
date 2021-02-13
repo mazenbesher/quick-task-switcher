@@ -1,3 +1,4 @@
+import datetime
 import sys
 
 from PyQt5 import QtWidgets, QtCore
@@ -11,6 +12,9 @@ from windows import MainWindow
 
 
 def main():
+    # record up time
+    config.up_time = datetime.datetime.now()
+
     # start backend server
     server = backend.Server()
     server.run_in_thread()
