@@ -40,7 +40,7 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
 
         # new desk button
         self.new_desk_btn = QtWidgets.QPushButton('+')
-        self.new_desk_btn.clicked.connect(self.newDesk)
+        self.new_desk_btn.clicked.connect(lambda: keyboard.press_and_release('ctrl+win+d'))
         self.new_desk_btn.setObjectName('NewDeskBtn')
         layout.addWidget(self.new_desk_btn)
 
@@ -58,10 +58,6 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
     @QtCore.pyqtSlot()
     def updateCurrDeskBtnTooltip(self):
         self.desk_num_btns[config.curr_desk].setToolTip(config.json_config.desktop_names[config.curr_desk])
-
-    def newDesk(self):
-        keyboard.press_and_release('ctrl+win+d')
-        desk_info.update()
 
     @QtCore.pyqtSlot()
     def updateBtnsColor(self):

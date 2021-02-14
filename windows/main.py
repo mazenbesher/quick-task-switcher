@@ -112,6 +112,10 @@ class MainWindow(QtWidgets.QMainWindow):
         rename_action = menu.addAction("Rename current desktop")
         rename_action.triggered.connect(self.findChild(DeskNameLabel).changeCurrDeskName)
 
+        # TODO
+        # close_action = menu.addAction("Close current desktop")
+        # close_action.triggered.connect()
+
         goto_submenu = GoToMenu(parent=menu)
         menu.addMenu(goto_submenu)
 
