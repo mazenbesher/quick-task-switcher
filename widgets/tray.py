@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 from globals import iconPaths, config, signals
-from menus import GoToMenu
+from menus import GoToMenu, actions
 from utils import desk_info
 from windows import MainWindow
 
@@ -27,9 +27,14 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
         self.desk_name_action.setDisabled(True)
         self.tray_menu.addAction(self.desk_name_action)
 
+        actions.add_change_desk_name_action(self.tray_menu, self.parent())
+        actions.add_close_action(self.tray_menu)
+
         # add submenu to go specific desktop
         self.goto_submenu = GoToMenu(parent=self.tray_menu)
         self.tray_menu.addMenu(self.goto_submenu)
+
+        self.tray_menu.addSeparator()
 
         # add center main window action
         self.center_main_win_action = QtWidgets.QAction("Center Window")
@@ -67,5 +72,5 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
     def updateDeskName(self):
         # set desktop name in the first menu entry
         curr_desk_name = config.json_config.desktop_names[config.curr_desk]
-        txt = f'Desktop {config.curr_desk}: {curr_desk_name}'
+        txt = f'Desktop {config.curr_desk + 1}: {curr_desk_name}'
         self.desk_name_action.setText(txt)

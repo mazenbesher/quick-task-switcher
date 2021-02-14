@@ -1,14 +1,12 @@
 from typing import Optional
 
-import keyboard
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config
-from menus import GoToMenu
+from menus import GoToMenu, actions
 from utils import monitors
 from web.backend import Server
 from widgets import MainWidget
-from widgets.desk_name import DeskNameLabel
 from .help import HelpWindow
 from .web import WebWindow
 
@@ -38,6 +36,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # other [helper] windows
         self.help_win = HelpWindow(self)
         self.web_win = WebWindow(self)
+
+        # context menu
+        self.create_context_menu()
 
         # show
         self.show()
@@ -107,25 +108,27 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 QtWidgets.QMessageBox.critical(self, "Docs not available", "Backend server is not running!")
 
-    def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
-        menu = QtWidgets.QMenu(self)
+    def create_context_menu(self):
+        self.menu = QtWidgets.QMenu(self)
 
-        rename_action = menu.addAction("Rename current desktop")
-        rename_action.triggered.connect(self.findChild(DeskNameLabel).changeCurrDeskName)
+        actions.add_change_desk_name_action(self.menu, self)
+        actions.add_close_action(self.menu)
 
-        close_action = menu.addAction("Close current desktop")
-        close_action.triggered.connect(lambda: keyboard.press_and_release('ctrl+win+f4'))
+        goto_submenu = GoToMenu(parent=self.menu)
+        self.menu.addMenu(goto_submenu)
 
-        goto_submenu = GoToMenu(parent=menu)
-        menu.addMenu(goto_submenu)
+        self.menu.addSeparator()
 
-        open_web = menu.addAction("Open web interface")
+        open_web = self.menu.addAction("Open analysis interface")
         open_web.triggered.connect(self.web_win.reload_and_show)
 
-        hide_action = menu.addAction('Minimize/Hide')
+        self.menu.addSeparator()
+
+        hide_action = self.menu.addAction('Minimize/Hide')
         hide_action.triggered.connect(self.hide)
 
-        quit_action = menu.addAction("Quit")
+        quit_action = self.menu.addAction("Quit")
         quit_action.triggered.connect(self.closeEvent)
 
-        menu.exec_(self.mapToGlobal(event.pos()))
+    def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
+        self.menu.exec_(self.mapToGlobal(event.pos()))
