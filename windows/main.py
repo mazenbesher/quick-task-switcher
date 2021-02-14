@@ -1,5 +1,6 @@
 from typing import Optional
 
+import keyboard
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config
@@ -112,9 +113,8 @@ class MainWindow(QtWidgets.QMainWindow):
         rename_action = menu.addAction("Rename current desktop")
         rename_action.triggered.connect(self.findChild(DeskNameLabel).changeCurrDeskName)
 
-        # TODO
-        # close_action = menu.addAction("Close current desktop")
-        # close_action.triggered.connect()
+        close_action = menu.addAction("Close current desktop")
+        close_action.triggered.connect(lambda: keyboard.press_and_release('ctrl+win+f4'))
 
         goto_submenu = GoToMenu(parent=menu)
         menu.addMenu(goto_submenu)
