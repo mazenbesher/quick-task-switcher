@@ -67,7 +67,7 @@ def main():
     config.quit_func = quit_func
 
     # system tray
-    config.tray = TrayWidget(main_window)
+    TrayWidget(main_window)
 
     sys.exit(app.exec_())
 

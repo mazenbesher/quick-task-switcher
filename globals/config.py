@@ -1,11 +1,13 @@
 import datetime
+import threading
 from dataclasses import dataclass, field
 from typing import Tuple, List
 
-from PyQt5 import QtWidgets
 from dataclasses_json import dataclass_json
 
 from utils.stopwatch import StopWatch
+
+config_lock = threading.Lock()
 
 
 @dataclass_json
@@ -47,21 +49,54 @@ class JSONConfig:
 class Config:
     # info about current desktop
     # initials: first desktop
-    curr_desk: int = 0
-    prev_curr_desk: int = 0
+    _curr_desk: int = 0
+    _prev_curr_desk: int = 0
+
+    @property
+    def curr_desk(self):
+        return self._curr_desk
+
+    @curr_desk.setter
+    def curr_desk(self, new_val: int):
+        with config_lock:
+            self._curr_desk = new_val
+
+    @property
+    def prev_curr_desk(self):
+        return self._prev_curr_desk
+
+    @prev_curr_desk.setter
+    def prev_curr_desk(self, new_val: int):
+        with config_lock:
+            self._prev_curr_desk = new_val
 
     # info about total number of desktops
     # initials: one virtual desktop
-    desk_count: int = 1
-    prev_desk_count: int = 1
+    _desk_count: int = 1
+    _prev_desk_count: int = 1
+
+    @property
+    def desk_count(self):
+        return self._desk_count
+
+    @desk_count.setter
+    def desk_count(self, new_val: int):
+        with config_lock:
+            self._desk_count = new_val
+
+    @property
+    def prev_desk_count(self):
+        return self._prev_desk_count
+
+    @prev_desk_count.setter
+    def prev_desk_count(self, new_val: int):
+        with config_lock:
+            self._prev_desk_count = new_val
 
     # desktops timers
     timers: List[StopWatch] = None
 
-    #
-    tray: QtWidgets.QSystemTrayIcon = None
-
-    #
+    # quit function (when app exists)
     quit_func = None
 
     # backend port
@@ -70,7 +105,7 @@ class Config:
     # up time
     up_time: datetime.datetime = None
 
-    #
+    # config save/loaded from json file
     json_config = JSONConfig()
 
 
