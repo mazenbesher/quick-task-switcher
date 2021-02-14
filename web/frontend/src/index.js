@@ -1,6 +1,7 @@
-import config from '../config.json'
 import './style.css';
-import desktops_info_details from './desktops_info'
+import config from '../config.json'
+import {create_desktop_info_sec} from './desktops_info'
+
 
 // add uptime
 {
@@ -18,4 +19,11 @@ import desktops_info_details from './desktops_info'
     `
 }
 
-document.body.appendChild(desktops_info_details)
+// get desktops info data
+const backend_addr = `http://127.0.0.1:${config.backend_port}`
+const response = await fetch(`${backend_addr}/info/desktops`)
+const desktops_info = await response.json()
+const durations_info_sec = create_desktop_info_sec(desktops_info)
+
+// desktops info section
+document.body.appendChild(durations_info_sec)
