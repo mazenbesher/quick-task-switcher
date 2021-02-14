@@ -38,18 +38,16 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
             layout.addWidget(desk_num_btn)
             self.desk_num_btns.append(desk_num_btn)
 
+        # new desk button
+        self.new_desk_btn = QtWidgets.QPushButton('+')
+        self.new_desk_btn.clicked.connect(self.newDesk)
+        self.new_desk_btn.setObjectName('NewDeskBtn')
+        layout.addWidget(self.new_desk_btn)
+
         # update buttons states
         desk_info.update()
         self.updateBtnsColor()
         self.updateBtnsDisabledState()
-
-        # new desk button
-        new_desk_btn = QtWidgets.QPushButton('+')
-        # new_desk_btn.setContentsMargins(0, 0, 0, 0)
-        # new_desk_btn.setFixedSize(17, 25)
-        new_desk_btn.clicked.connect(self.newDesk)
-        new_desk_btn.setObjectName('NewDeskBtn')
-        layout.addWidget(new_desk_btn)
 
         # connect signals
         signals.currDeskChanged.connect(self.updateBtnsColor)
@@ -91,3 +89,9 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
                 desk_num_btn.setProperty("inactive", True)
             else:
                 desk_num_btn.setProperty("inactive", False)
+
+        # if last desktop, disable add new desktop
+        if config.desk_count == config.json_config.desktops_number:
+            self.new_desk_btn.setDisabled(True)
+        else:
+            self.new_desk_btn.setDisabled(False)
