@@ -32,7 +32,7 @@ class GoToMenu(QtWidgets.QMenu):
     def updateCurrDeskLabel(self):
         # update goto submenu text
         curr_desk_name = config.json_config.desktop_names[config.curr_desk]
-        txt = f'Desktop {config.curr_desk}: {curr_desk_name}'
+        txt = f'Desktop {config.curr_desk + 1}: {curr_desk_name}'
         self.actions[config.curr_desk].setText(txt)
 
     @QtCore.pyqtSlot()

@@ -69,21 +69,25 @@ def update(desk_count: int = None, curr_desk: int = None):
     # this can happened because of the DeskWatcher class which uses two threads to monitor current and total number
     # of virtual desktops
     # both of these threads are connected to this function as callback
-    update_desk_info_lock.acquire(timeout=-1)
+    with update_desk_info_lock:
+        new_desk, desk_closed = update_desk_count(desk_count)
 
-    new_desk, desk_closed = update_desk_count(desk_count)
-    if new_desk:
-        # new desk actions
-        signals.newDesk.emit()
-    if desk_closed:
-        # desk closed actions
-        signals.deskClosed.emit()
+        if config.desk_count > config.json_config.desktops_number:
+            # TODO: this message is blocked and cannot be confirmed
+            # QtWidgets.QMessageBox.critical(None, *messages.unsupported_desktops())
+            config.quit_func()
+            return
 
-    if update_curr_desk(curr_desk):
-        # new desk actions
-        signals.currDeskChanged.emit()
+        if new_desk:
+            # new desk actions
+            signals.newDesk.emit()
+        if desk_closed:
+            # desk closed actions
+            signals.deskClosed.emit()
 
-    update_desk_info_lock.release()
+        if update_curr_desk(curr_desk):
+            # new desk actions
+            signals.currDeskChanged.emit()
 
 
 def create_go_to_desk_func(desk_num: int):

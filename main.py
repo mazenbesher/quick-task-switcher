@@ -3,8 +3,8 @@ import sys
 
 from PyQt5 import QtWidgets, QtCore
 
-from globals import config
-from utils import config_manager, desk_watcher, desk_info
+from globals import config, messages
+from utils import config_manager, desk_watcher, desk_info, desk_manager
 from utils.paths import resource_path
 from web import backend
 from widgets.tray import TrayWidget
@@ -15,15 +15,21 @@ def main():
     # record up time
     config.up_time = datetime.datetime.now()
 
-    # start backend server
-    server = backend.Server()
-    server.run_in_thread()
-
     # load config
     config_manager.load_json_config()
 
     # create app
     app = QtWidgets.QApplication(sys.argv)
+
+    # check supported number of desktops
+    if desk_manager.get_desktop_count() > config.json_config.desktops_number:
+        QtWidgets.QMessageBox.critical(None, *messages.unsupported_desktops())
+        app.quit()
+        return
+
+    # start backend server
+    server = backend.Server()
+    server.run_in_thread()
 
     # set style sheet
     with open(resource_path('assets/style.css')) as fp:
@@ -39,7 +45,7 @@ def main():
         timer.signals.desk_count_changed.connect(desk_info.update)
     except desk_watcher.RegKeysNotExist:
         # timer fallback
-        QtWidgets.QMessageBox.warning(main_window, "Warning", "Can not register registry callbacks")
+        QtWidgets.QMessageBox.warning(main_window, *messages.timer_fallback())
 
         # refresh desk info each check_interval
         timer = QtCore.QTimer()
@@ -65,6 +71,9 @@ def main():
         app.quit()
 
     config.quit_func = quit_func
+
+    # handle shutdown
+    app.aboutToQuit.connect(quit_func)
 
     # system tray
     TrayWidget(main_window)
