@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from globals import config, JSONConfig
@@ -26,6 +27,16 @@ def load_json_config():
 
 
 def save_json_config():
+    # save quit time
+    config.json_config.quit_time = datetime.datetime.now().timestamp()
+
+    # save session durations
+    config.json_config.prev_durations = {}
+    for desk_id in range(config.desk_count):
+        name = config.json_config.desktop_names[desk_id]
+        dur = config.timers[desk_id].get_elapsed()
+        config.json_config.prev_durations[name] = dur
+
     json_config = config.json_config.to_json(indent=2)
     with open(config.json_config.config_path, 'w') as fp:
         fp.write(json_config)

@@ -3,10 +3,10 @@ from typing import Optional
 
 
 class StopWatch():
-    def __init__(self, name: Optional[str] = None):
+    def __init__(self, name: Optional[str] = None, start_seconds: float = 0):
         self.name = name
         self.running = False
-        self.elapsed = 0
+        self.elapsed = start_seconds
         self.start_time = None
         self.pause_time = None
 

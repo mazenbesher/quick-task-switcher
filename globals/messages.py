@@ -23,5 +23,25 @@ class Messages:
             "Can not register registry callbacks"
         ]
 
+    @staticmethod
+    def load_prev_durations_question():
+        """
+        :return: [Title, Message]
+        """
+        return [
+            'Continue previous session',
+            'Load durations from previous session?'
+        ]
+
+    @staticmethod
+    def load_prev_durations_info():
+        """
+        :return: [Title, Message]
+        """
+        return [
+            'Loaded previous durations',
+            'Previous durations has been loaded',
+        ]
+
 
 messages = Messages()
