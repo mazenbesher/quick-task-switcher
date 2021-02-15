@@ -2,10 +2,10 @@ from PyQt5 import QtCore
 
 
 class Signals(QtCore.QObject):
-    currDeskChanged = QtCore.pyqtSignal()
-    newDesk = QtCore.pyqtSignal()
-    deskClosed = QtCore.pyqtSignal()
-    currDeskNameChanged = QtCore.pyqtSignal()
+    curr_desk_changed = QtCore.pyqtSignal()
+    new_desk = QtCore.pyqtSignal()
+    desk_closed = QtCore.pyqtSignal()
+    curr_desk_name_changed = QtCore.pyqtSignal()
 
 
 signals = Signals()

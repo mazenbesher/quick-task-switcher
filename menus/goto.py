@@ -20,10 +20,10 @@ class GoToMenu(QtWidgets.QMenu):
             self.actions.append(goto_action)
 
         # signals
-        signals.currDeskChanged.connect(self.updateCurrDeskLabel)
-        signals.currDeskNameChanged.connect(self.updateCurrDeskLabel)
-        signals.deskClosed.connect(self.updateDisabledStates)
-        signals.newDesk.connect(self.updateDisabledStates)
+        signals.curr_desk_changed.connect(self.updateCurrDeskLabel)
+        signals.curr_desk_name_changed.connect(self.updateCurrDeskLabel)
+        signals.desk_closed.connect(self.updateDisabledStates)
+        signals.new_desk.connect(self.updateDisabledStates)
 
         # initial updates
         self.updateCurrDeskLabel()

@@ -36,4 +36,4 @@ def change_curr_desk_name(parent: QtWidgets.QWidget):
             config.json_config.desktop_names[config.curr_desk] = new_desk_name_input
 
             # publish
-            signals.currDeskNameChanged.emit()
+            signals.curr_desk_name_changed.emit()

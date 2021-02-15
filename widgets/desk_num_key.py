@@ -50,10 +50,10 @@ class DeskNumKeysWidget(QtWidgets.QWidget):
         self.updateBtnsDisabledState()
 
         # connect signals
-        signals.currDeskChanged.connect(self.updateBtnsColor)
-        signals.newDesk.connect(self.updateBtnsDisabledState)
-        signals.deskClosed.connect(self.updateBtnsDisabledState)
-        signals.currDeskNameChanged.connect(self.updateCurrDeskBtnTooltip)
+        signals.curr_desk_changed.connect(self.updateBtnsColor)
+        signals.new_desk.connect(self.updateBtnsDisabledState)
+        signals.desk_closed.connect(self.updateBtnsDisabledState)
+        signals.curr_desk_name_changed.connect(self.updateCurrDeskBtnTooltip)
 
     @QtCore.pyqtSlot()
     def updateCurrDeskBtnTooltip(self):

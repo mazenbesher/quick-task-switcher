@@ -64,8 +64,8 @@ class DeskTimerLabel(QtWidgets.QLabel):
         self.show()
 
         # connect signals
-        signals.currDeskChanged.connect(self.desktopChanged)
-        signals.deskClosed.connect(self.deskClosed)
+        signals.curr_desk_changed.connect(self.desktopChanged)
+        signals.desk_closed.connect(self.deskClosed)
 
         # refresh timer text each second
         self.timer = QtCore.QTimer()

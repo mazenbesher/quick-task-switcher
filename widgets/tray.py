@@ -48,8 +48,8 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
 
         # signals
         self.activated.connect(self.onActivation)
-        signals.currDeskChanged.connect(self.updateIcon)
-        signals.currDeskNameChanged.connect(self.updateDeskName)
+        signals.curr_desk_changed.connect(self.updateIcon)
+        signals.curr_desk_name_changed.connect(self.updateDeskName)
 
         # initial updates
         self.updateIcon()

@@ -19,9 +19,9 @@ class DeskNameLabel(QtWidgets.QLabel):
         self.show()
 
         # connect signals
-        signals.currDeskChanged.connect(self.updateText)
-        signals.currDeskNameChanged.connect(self.currDeskNameChanged)
-        signals.deskClosed.connect(self.deskClosed)
+        signals.curr_desk_changed.connect(self.updateText)
+        signals.curr_desk_name_changed.connect(self.currDeskNameChanged)
+        signals.desk_closed.connect(self.deskClosed)
 
     @QtCore.pyqtSlot()
     def deskClosed(self):

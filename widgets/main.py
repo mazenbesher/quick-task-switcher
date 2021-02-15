@@ -19,10 +19,10 @@ class MainWidget(QtWidgets.QWidget):
 
         # TODO: enable only via a flag
         # TODO: automate this in a loop
-        signals.deskClosed.connect(self.signalsDebugFn('deskClosed'))
-        signals.newDesk.connect(self.signalsDebugFn('newDesk'))
-        signals.currDeskChanged.connect(self.signalsDebugFn('currDeskChanged'))
-        signals.currDeskNameChanged.connect(self.signalsDebugFn('currDeskNameChanged'))
+        signals.desk_closed.connect(self.signalsDebugFn('desk_closed'))
+        signals.new_desk.connect(self.signalsDebugFn('new_desk'))
+        signals.curr_desk_changed.connect(self.signalsDebugFn('curr_desk_changed'))
+        signals.curr_desk_name_changed.connect(self.signalsDebugFn('curr_desk_name_changed'))
 
         # layout
         layout = QtWidgets.QVBoxLayout()

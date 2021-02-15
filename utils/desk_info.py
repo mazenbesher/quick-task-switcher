@@ -80,14 +80,14 @@ def update(desk_count: int = None, curr_desk: int = None):
 
         if new_desk:
             # new desk actions
-            signals.newDesk.emit()
+            signals.new_desk.emit()
         if desk_closed:
             # desk closed actions
-            signals.deskClosed.emit()
+            signals.desk_closed.emit()
 
         if update_curr_desk(curr_desk):
             # new desk actions
-            signals.currDeskChanged.emit()
+            signals.curr_desk_changed.emit()
 
 
 def create_go_to_desk_func(desk_num: int):
