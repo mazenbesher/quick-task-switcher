@@ -17,12 +17,14 @@ class MainWidget(QtWidgets.QWidget):
         # set name (for css ref for instance)
         self.setObjectName("MainWidget")
 
+        # debug all signals
         # TODO: enable only via a flag
         # TODO: automate this in a loop
         signals.desk_closed.connect(self.signalsDebugFn('desk_closed'))
         signals.new_desk.connect(self.signalsDebugFn('new_desk'))
         signals.curr_desk_changed.connect(self.signalsDebugFn('curr_desk_changed'))
         signals.curr_desk_name_changed.connect(self.signalsDebugFn('curr_desk_name_changed'))
+        signals.foreground_window_changed.connect(self.singals_debug_fg_win_changed)
 
         # layout
         layout = QtWidgets.QVBoxLayout()
@@ -44,6 +46,7 @@ class MainWidget(QtWidgets.QWidget):
         layout.addLayout(sublayout)
 
     def signalsDebugFn(self, event_name: str):
+        @QtCore.pyqtSlot(int)
         def fn():
             msg = event_name
             msg += f'\n\tCount: {config.desk_count}, Prev Count: {config.prev_desk_count}'
@@ -51,6 +54,10 @@ class MainWidget(QtWidgets.QWidget):
             print(msg)
 
         return fn
+
+    @QtCore.pyqtSlot(int)
+    def singals_debug_fg_win_changed(self, hwnd: int):
+        print(f'Foreground window changed to {hwnd}')
 
     def wheelEvent(self, event: QtGui.QWheelEvent) -> None:
         # wheel up or down

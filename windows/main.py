@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config
 from menus import GoToMenu, actions
-from utils import monitors
+from utils import monitors, window_watcher
 from web.backend import Server
 from widgets import MainWidget
 from .help import HelpWindow
@@ -15,6 +15,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None, backend_server: Optional[Server] = None) -> None:
         super(MainWindow, self).__init__(parent)
         self.backend_server = backend_server
+
+        # create window watcher
+        self.threadpool = QtCore.QThreadPool()
+        self.win_watcher = window_watcher.QtWindowWatcher()
+        self.threadpool.start(self.win_watcher)
 
         # title
         self.setWindowTitle("Quick Task Switcher")
