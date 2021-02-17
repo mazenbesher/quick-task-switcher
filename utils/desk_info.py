@@ -5,6 +5,7 @@ from globals import signals, config
 from utils import desk_manager
 
 update_desk_info_lock = threading.Lock()
+first_call = True
 
 
 def go_to_desk(desk_num: int):
@@ -65,6 +66,8 @@ def update_curr_desk(curr_desk: int = None):
 
 
 def update(desk_count: int = None, curr_desk: int = None):
+    global first_call
+
     # prevent race-condition to update desktop info multiple times from multiple threads
     # this can happened because of the DeskWatcher class which uses two threads to monitor current and total number
     # of virtual desktops
@@ -78,16 +81,18 @@ def update(desk_count: int = None, curr_desk: int = None):
             config.quit_func()
             return
 
-        if new_desk:
+        if new_desk and not first_call:
             # new desk actions
             signals.new_desk.emit()
-        if desk_closed:
+        if desk_closed and not first_call:
             # desk closed actions
             signals.desk_closed.emit()
 
-        if update_curr_desk(curr_desk):
+        if update_curr_desk(curr_desk) and not first_call:
             # new desk actions
             signals.curr_desk_changed.emit()
+
+        first_call = False
 
 
 def create_go_to_desk_func(desk_num: int):
