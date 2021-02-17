@@ -58,6 +58,9 @@ class JSONConfig:
     # option to always continue from duration of previous session without asking
     always_cont_prev_dur: bool = False
 
+    # path to sqlite database to log events
+    db_path: str = 'qts.db'
+
 
 class Config:
     # info about current desktop

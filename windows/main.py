@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 from PyQt5 import QtCore, QtWidgets, QtGui
@@ -5,6 +6,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from globals import config
 from menus import GoToMenu, actions
 from utils import monitors, window_watcher
+from utils.event_logger import DBEventLogger
 from web.backend import Server
 from widgets import MainWidget
 from .help import HelpWindow
@@ -15,6 +17,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None, backend_server: Optional[Server] = None) -> None:
         super(MainWindow, self).__init__(parent)
         self.backend_server = backend_server
+
+        # create and start event logger
+        self.db_logger = DBEventLogger(self, db_path=Path(config.json_config.db_path))
+        self.db_logger.log_start()
+        self.quit_logged = False  # TODO: workaround (see self.aboutToClose)
 
         # create window watcher
         self.threadpool = QtCore.QThreadPool()
@@ -53,7 +60,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # move to last known location if any
         if config.json_config.last_position is not None:
-            self.move(*config.json_config.last_position)
+            # is location still in visible area?
+            if monitors.is_loc_in_view(*config.json_config.last_position):
+                self.move(*config.json_config.last_position)
 
         # TODO: workaround to remove extra space at top and bottom
         self.resize(100, 50)
@@ -83,8 +92,13 @@ class MainWindow(QtWidgets.QMainWindow):
         # save position
         config.json_config.last_position = self.pos().x(), self.pos().y()
 
+        # log quit event
+        # TODO: workaround since this function is (for no apparent reason) called twice (at least) on quits
+        if not self.quit_logged:
+            self.quit_logged = True
+            self.db_logger.log_quit()
+
     def closeEvent(self, event):
-        self.aboutToClose()
         config.quit_func()
 
     def keyPressEvent(self, event):

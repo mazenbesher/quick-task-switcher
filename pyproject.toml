@@ -15,6 +15,7 @@ uvicorn = "^0.13.3"
 mss = "^6.1.0"
 Pillow = "^8.1.0"
 screeninfo = "^0.6.7"
+SQLAlchemy = "^1.3.23"
 
 [tool.poetry.dev-dependencies]
 pyinstaller = "^4.2"
