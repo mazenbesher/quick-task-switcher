@@ -1,5 +1,6 @@
 import datetime
 import os
+from pathlib import Path
 
 from globals import config, JSONConfig
 
@@ -19,8 +20,8 @@ def validate_config():
 
 
 def load_json_config():
-    if os.path.exists(config.json_config.config_path):
-        with open(config.json_config.config_path) as fp:
+    if os.path.exists(Path(config.json_config.config_path)):
+        with open(Path(config.json_config.config_path)) as fp:
             json_config = JSONConfig.from_json(fp.read())
         config.json_config = json_config
     validate_config()
