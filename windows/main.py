@@ -18,11 +18,6 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(parent)
         self.backend_server = backend_server
 
-        # create and start event logger
-        self.db_logger = DBEventLogger(self, db_path=Path(config.json_config.db_path))
-        self.db_logger.log_start()
-        self.quit_logged = False  # TODO: workaround (see self.aboutToClose)
-
         # create window watcher
         self.threadpool = QtCore.QThreadPool()
         self.win_watcher = window_watcher.QtWindowWatcher()
@@ -66,6 +61,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # TODO: workaround to remove extra space at top and bottom
         self.resize(100, 50)
+
+        # create and start event logger
+        self.db_logger = DBEventLogger(self, db_path=Path(config.json_config.db_path))
+        self.db_logger.log_start()
+        self.quit_logged = False  # TODO: workaround (see self.aboutToClose)
 
     def set_titlebar_state_from_config(self):
         if not config.json_config.titlebar_hidden:
