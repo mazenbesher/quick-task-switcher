@@ -41,8 +41,6 @@ class DBEventLogger(QtCore.QObject):
         # don't update prev row of fg_win_change table if first call to log_fg_win_change or log_quit
         self.first_fg_win = True
 
-        # TODO: delete records older than x (https://stackoverflow.com/a/15881195/1617883)
-
         # foreground window change table and signals
         self.fg_win_change_table = sql.Table(
             'fg_win_change', metadata,
@@ -91,6 +89,15 @@ class DBEventLogger(QtCore.QObject):
 
         # create tables
         metadata.create_all(engine)
+
+        # delete records older than json_config.db_delete_older_than_days (https://stackoverflow.com/a/15881195/1617883)
+        # TODO: add delete if size bigger than x
+        if config.json_config.db_delete_older_than_days != -1:
+            too_old = datetime.datetime.utcnow() - datetime.timedelta(
+                days=config.json_config.db_delete_older_than_days
+            )
+            for table in metadata.tables:
+                self.conn.execute(table.delete().where(table.c.time_utc <= too_old))
 
     def _record_session_durations(self) -> Dict[str, int]:
         """

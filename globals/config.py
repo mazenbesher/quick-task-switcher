@@ -61,6 +61,9 @@ class JSONConfig:
     # path to sqlite database to log events
     db_path: str = 'qts.db'
 
+    # delete records in db older than (never if -1)
+    db_delete_older_than_days: int = -1
+
 
 class Config:
     # info about current desktop
