@@ -58,30 +58,36 @@ class DeskTimerLabel(QtWidgets.QLabel):
         self.setObjectName("DeskTimerLabel")
 
         # set initial text
-        self.updateText()
+        self.update_text()
 
         # show
         self.show()
 
         # connect signals
-        signals.curr_desk_changed.connect(self.desktopChanged)
-        signals.desk_closed.connect(self.deskClosed)
+        signals.curr_desk_changed.connect(self.desk_changed)
+        signals.curr_desk_name_changed.connect(self.desk_renamed)
+        signals.desk_closed.connect(self.desk_closed)
 
         # refresh timer text each second
         self.timer = QtCore.QTimer()
         self.timer.setInterval(1000)
-        self.timer.timeout.connect(self.updateText)
+        self.timer.timeout.connect(self.update_text)
         self.timer.start()
 
     @QtCore.pyqtSlot()
-    def deskClosed(self):
+    def desk_closed(self):
         closed_desk_id = config.curr_desk
         if config.timers[closed_desk_id].running:
             config.timers[closed_desk_id].pause()
         config.timers[closed_desk_id].reset()
 
     @QtCore.pyqtSlot()
-    def desktopChanged(self):
+    def desk_renamed(self):
+        # reset timer of current desk
+        config.timers[config.curr_desk].reset()
+
+    @QtCore.pyqtSlot()
+    def desk_changed(self):
         # if not moving from closed desktop
         if config.prev_curr_desk is not None and \
                 config.prev_curr_desk < len(config.timers) and \
@@ -96,7 +102,7 @@ class DeskTimerLabel(QtWidgets.QLabel):
             config.timers[config.curr_desk].start()
 
         # show
-        self.updateText()
+        self.update_text()
 
-    def updateText(self):
+    def update_text(self):
         self.setText(config.timers[config.curr_desk].get_elapsed_formatted())
