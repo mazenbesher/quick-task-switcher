@@ -5,13 +5,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
+import psutil
+from dataclasses_json import dataclass_json
+
 from utils.paths import resource_path
 
 
-# from dataclasses_json import dataclass_json
-
-
-# @dataclass_json
+@dataclass_json
 @dataclass
 class Window:
     title: str
@@ -21,6 +21,7 @@ class Window:
     desk_num: int
     pid: int
     proc_name: str
+    exe: str  # path to exe from psutil
 
 
 enumWindows = ctypes.windll.user32.EnumWindows
@@ -51,6 +52,17 @@ default_excluded_apps_titles = [
     'Program Manager',
 ]
 
+default_excluded_proc_names = [
+    # 'ApplicationFrameHost',
+    # 'HxCalendarAppImm',
+]
+
+default_excluded_apps_procs = [
+    # app title, proc name
+    ('Calendar', 'ApplicationFrameHost'),
+    ('Calendar', 'HxCalendarAppImm'),
+]
+
 
 def get_hwnd_title(hwnd: int) -> str:
     length = getWindowTextLength(hwnd)
@@ -66,7 +78,11 @@ def get_windows_on_all_desk() -> List[Window]:
         if isWindowVisible(hwnd):
             title = get_hwnd_title(hwnd)
             if len(title) != 0 and title not in default_excluded_apps_titles:
-                windows.append(get_hwnd_window(hwnd))
+                pid = get_pid(hwnd)
+                proc_name = get_proc_name(pid)
+                if proc_name not in default_excluded_proc_names:
+                    if (title, proc_name) not in default_excluded_apps_procs:
+                        windows.append(get_hwnd_window(hwnd))
         return True
 
     enumWindows(enumWindowsProc(foreach_window), 0)
@@ -95,7 +111,7 @@ def move_window_to_desktop(win_to_move_hwnd: int, desk: int):
     def foreach_window(hwnd, lParam):
         if isWindowVisible(hwnd):
             if hwnd == win_to_move_hwnd:
-                vda.MoveWindowToDesktopNumber(hwnd, desk - 1)
+                vda.MoveWindowToDesktopNumber(hwnd, desk)
                 return False  # stop iteration
         return True
 
@@ -116,14 +132,21 @@ def get_foreground_window() -> Window:
 
 def get_hwnd_window(hwnd: int) -> Window:
     pid = get_pid(hwnd)
+
+    try:
+        exe = psutil.Process(pid).exe()
+    except psutil.AccessDenied:
+        exe = ''
+
     return Window(
         hwnd=hwnd,
-        desk_num=vda.GetWindowDesktopNumber(hwnd) + 1,
+        desk_num=vda.GetWindowDesktopNumber(hwnd),
         title=get_hwnd_title(hwnd),
         is_pinned_win=bool(vda.IsPinnedWindow(hwnd)),
         is_pinned_app=bool(vda.IsPinnedApp(hwnd)),
         pid=pid,
         proc_name=get_proc_name(pid),
+        exe=exe,
     )
 
 
