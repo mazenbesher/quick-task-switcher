@@ -229,35 +229,11 @@ class DBEventLogger(QtCore.QObject):
         )
         self.conn.execute(ins)
 
-    @staticmethod
-    def _process_like_term(search_term: str) -> str:
-        """
-        Allow "known" wildcards in search term and produce compatible term for SQL
-        Known -> SQL    Desc
-        _     -> __     skips underscore
-        *     -> %      matches any sequence of zero or more characters.
-        ?     -> _      matches any single character
-
-        References:
-            - https://www.sqlitetutorial.net/sqlite-like/
-            - https://stackoverflow.com/a/12060886/1617883
-        """
-        if '*' in search_term or '_' in search_term:
-            return search_term.replace('_', '__').replace('*', '%').replace('?', '_')
-        return f'%{search_term}%'
-
     def get_proc_fg(self, proc: str, fro: datetime.datetime) -> sql.engine.ResultProxy:
         """
         The results has the following useful methods:
             fetchall: retrieve all data as list of tuples
             keys:     columns names
-
-        Example: convert results to pandas dataframe (https://stackoverflow.com/a/12060886/1617883)
-        ```python
-        res = db_event_logger.get_proc_fg('firefox', dt)
-        df = pd.DataFrame(res.fetchall())
-        df.columns = res.keys()
-        ```
         """
         return self.conn.execute(
             sql.sql.select([
@@ -278,7 +254,6 @@ class DBEventLogger(QtCore.QObject):
         match
         https://stackoverflow.com/a/4926793/1617883
         """
-        proc_search_term = self._process_like_term(proc_search_term)
         return self.conn.execute(
             sql.sql.select([
                 self.fg_win_change_table.c.desk,
@@ -293,7 +268,6 @@ class DBEventLogger(QtCore.QObject):
         )
 
     def get_proc_desk_fg_like(self, proc_search_term: str, desk: str, fro: datetime.datetime) -> sql.engine.ResultProxy:
-        proc_search_term = self._process_like_term(proc_search_term)
         return self.conn.execute(
             sql.sql.select([
                 self.fg_win_change_table.c.title,
