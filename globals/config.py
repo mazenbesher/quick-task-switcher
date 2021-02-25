@@ -58,7 +58,7 @@ class JSONConfig:
     # option to always continue from duration of previous session without asking
     always_cont_prev_dur: bool = False
 
-    # path to sqlite database to log events
+    # path to sqlite database (e.g. to log events)
     db_path: str = 'qts.db'
 
     # delete records in db older than (never if -1)
@@ -66,6 +66,9 @@ class JSONConfig:
 
     # icons cache directory
     icons_cache: str = 'icons_cache'
+
+    # save session on exit
+    save_sess_on_exit: bool = False
 
 
 class Config:
@@ -126,6 +129,10 @@ class Config:
 
     # up time
     up_time: datetime.datetime = None
+
+    # session manager (util.sess_manager.SessionManager)
+    # TODO: type forward reference to util.sess_manager.SessionManager
+    session_manager = None
 
     # config save/loaded from json file
     json_config = JSONConfig()

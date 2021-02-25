@@ -1,6 +1,6 @@
-from pathlib import Path
 from typing import Optional
 
+import sqlalchemy
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 from globals import config
@@ -9,12 +9,14 @@ from utils import monitors, window_watcher
 from utils.event_logger import DBEventLogger
 from web.backend import Server
 from widgets import MainWidget
+from widgets.tray import TrayWidget
 from .help import HelpWindow
+from .sess_manager_win import SessManagerWindow
 from .web import WebWindow
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None, backend_server: Optional[Server] = None) -> None:
+    def __init__(self, backend_server: Optional[Server], conn: sqlalchemy.engine.Connection, parent=None) -> None:
         super(MainWindow, self).__init__(parent)
         self.backend_server = backend_server
 
@@ -43,6 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # other [helper] windows
         self.help_win = HelpWindow(self)
         self.web_win = WebWindow(self)
+        self._sess_manager_win = None  # create on demand
 
         # context menu
         self.create_context_menu()
@@ -62,10 +65,24 @@ class MainWindow(QtWidgets.QMainWindow):
         # TODO: workaround to remove extra space at top and bottom
         self.resize(100, 50)
 
+        # system tray
+        self.tray = TrayWidget(self)
+
         # create and start event logger
-        self.db_logger = DBEventLogger(self, db_path=Path(config.json_config.db_path))
+        self.db_logger = DBEventLogger(self, conn)
         self.db_logger.log_start()
         self.quit_logged = False  # TODO: workaround (see self.aboutToClose)
+
+    @property
+    def sess_manager_win(self) -> SessManagerWindow:
+        if not self._sess_manager_win:
+            self._sess_manager_win = SessManagerWindow(self)
+        return self._sess_manager_win
+
+    def show_update_sess_win(self):
+        self.sess_manager_win.tree_widget.update_model()
+        self.sess_manager_win.adjustSize()
+        self.sess_manager_win.show()
 
     def set_titlebar_state_from_config(self):
         if not config.json_config.titlebar_hidden:
@@ -140,6 +157,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         open_web = self.menu.addAction("Open analysis interface")
         open_web.triggered.connect(self.web_win.reload_and_show)
+
+        self.menu.addSeparator()
+
+        actions.add_sess_actions(self.menu, self)
 
         self.menu.addSeparator()
 

@@ -16,6 +16,8 @@ mss = "^6.1.0"
 Pillow = "^8.1.0"
 screeninfo = "^0.6.7"
 SQLAlchemy = "^1.3.23"
+numpy = "^1.20.1"
+pandas = "^1.2.2"
 psutil = "^5.8.0"
 
 [tool.poetry.dev-dependencies]

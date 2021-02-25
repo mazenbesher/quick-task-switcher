@@ -3,11 +3,10 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from globals import iconPaths, config, signals
 from menus import GoToMenu, actions
 from utils import desk_info
-from windows import MainWindow
 
 
 class TrayWidget(QtWidgets.QSystemTrayIcon):
-    def __init__(self, parent: MainWindow):
+    def __init__(self, parent):
         super(TrayWidget, self).__init__(parent)
 
         # change icon to current desk
@@ -36,18 +35,26 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
 
         self.tray_menu.addSeparator()
 
+        actions.add_sess_actions(self.tray_menu, self.parent())
+
+        self.tray_menu.addSeparator()
+
         # add center main window action
         self.center_main_win_action = QtWidgets.QAction("Center Window")
         self.center_main_win_action.triggered.connect(self.parent().center)
         self.tray_menu.addAction(self.center_main_win_action)
 
+        # show/hide main window
+        self.show_hide_main_win_action = QtWidgets.QAction("Show/Hide Window")
+        self.show_hide_main_win_action.triggered.connect(self.show_hide_main_win)
+        self.tray_menu.addAction(self.show_hide_main_win_action)
+
         # add quit action to system tray
         self.quit_action = QtWidgets.QAction("Quit")
-        self.quit_action.triggered.connect(config.quit_func)
         self.tray_menu.addAction(self.quit_action)
+        # NOTE: quit action not connected here!
 
         # signals
-        self.activated.connect(self.onActivation)
         signals.curr_desk_changed.connect(self.updateIcon)
         signals.curr_desk_name_changed.connect(self.updateDeskName)
 
@@ -55,11 +62,12 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
         self.updateIcon()
         self.updateDeskName()
 
-    @QtCore.pyqtSlot()
-    def onActivation(self):
-        # show main window if hidden (aka minimized)
+    def show_hide_main_win(self):
+        # show main window if hidden (aka minimized) else hide
         if not self.parent().isVisible():
             self.parent().show()
+        else:
+            self.parent().hide()
 
     @QtCore.pyqtSlot()
     def updateIcon(self):
