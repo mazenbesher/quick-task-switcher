@@ -64,6 +64,9 @@ class JSONConfig:
     # delete records in db older than (never if -1)
     db_delete_older_than_days: int = -1
 
+    # icons cache directory
+    icons_cache: str = 'icons_cache'
+
 
 class Config:
     # info about current desktop

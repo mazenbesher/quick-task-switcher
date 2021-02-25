@@ -254,3 +254,4 @@ config.json
 !quick_task_switcher_onefile.spec
 tmp/*
 *.db
+icons_cache

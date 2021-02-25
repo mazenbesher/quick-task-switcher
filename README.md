@@ -49,3 +49,5 @@ the `quick_task_switcher_onefile.spec` instead.
   a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
 - The `utils/desk_manager` subpackage make use of `VirtualDesktopAccessor.dll` create
   by [Jari Pennanen](https://github.com/Ciantic)
+- The file `utils/icon_extractor/extract_exe_icon.py` is copied
+  from [`extract-icon-py`](https://github.com/firodj/extract-icon-py).
