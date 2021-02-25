@@ -13,7 +13,7 @@ class Server(uvicorn.Server):
     https://stackoverflow.com/a/64521239/1617883
     """
 
-    def __init__(self):
+    def __init__(self, enable_logging: bool = False):
         """
         https://www.uvicorn.org/deployment/#running-programmatically
         """
@@ -21,11 +21,14 @@ class Server(uvicorn.Server):
         if not ports.is_port_open(config.backend_port):
             raise ValueError(f'Can not allocate port: {config.backend_port}')
 
+        # Options: 'critical', 'error', 'warning', 'info', 'debug', 'trace'.
+        log_level = "info" if enable_logging else "error"
+
         super(Server, self).__init__(uvicorn.Config(app,
                                                     host="127.0.0.1",
                                                     port=config.backend_port,
                                                     loop="asyncio",
-                                                    log_level="info"))
+                                                    log_level=log_level))
 
     def install_signal_handlers(self):
         pass

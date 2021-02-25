@@ -7,8 +7,9 @@ from utils.stopwatch import StopWatch
 
 
 class DeskTimerLabel(QtWidgets.QLabel):
-    def __init__(self, parent):
+    def __init__(self, parent, enable_logging: bool = False):
         super(DeskTimerLabel, self).__init__(parent)
+        self.enable_logging = enable_logging
 
         # option to load prev session durations if in the same day into current timers
         load_prev_durations = False
@@ -93,12 +94,14 @@ class DeskTimerLabel(QtWidgets.QLabel):
                 config.prev_curr_desk < len(config.timers) and \
                 config.timers[config.prev_curr_desk].running:
             # pause prev desktop watch
-            print(f'Pausing desktop {config.prev_curr_desk + 1}')
+            if self.enable_logging:
+                print(f'Pausing desktop {config.prev_curr_desk + 1}')
             config.timers[config.prev_curr_desk].pause()
 
         # resume new desktop watch
         if not config.timers[config.curr_desk].running:
-            print(f'Resuming desktop {config.curr_desk + 1}')
+            if self.enable_logging:
+                print(f'Resuming desktop {config.curr_desk + 1}')
             config.timers[config.curr_desk].start()
 
         # show

@@ -10,7 +10,7 @@ from .grab_area_widget import GrabAreaWidget
 
 class MainWidget(QtWidgets.QWidget):
 
-    def __init__(self, parent):  # , grabButton: QtCore.Qt.MouseButton = QtCore.Qt.LeftButton):
+    def __init__(self, parent, enable_logging: bool = False):
         super(MainWidget, self).__init__(parent)
         # self.grabButton = grabButton
 
@@ -20,11 +20,12 @@ class MainWidget(QtWidgets.QWidget):
         # debug all signals
         # TODO: enable only via a flag
         # TODO: automate this in a loop
-        signals.desk_closed.connect(self.signalsDebugFn('desk_closed'))
-        signals.new_desk.connect(self.signalsDebugFn('new_desk'))
-        signals.curr_desk_changed.connect(self.signalsDebugFn('curr_desk_changed'))
-        signals.curr_desk_name_changed.connect(self.signalsDebugFn('curr_desk_name_changed'))
-        signals.foreground_window_changed.connect(self.singals_debug_fg_win_changed)
+        if enable_logging:
+            signals.desk_closed.connect(self.signalsDebugFn('desk_closed'))
+            signals.new_desk.connect(self.signalsDebugFn('new_desk'))
+            signals.curr_desk_changed.connect(self.signalsDebugFn('curr_desk_changed'))
+            signals.curr_desk_name_changed.connect(self.signalsDebugFn('curr_desk_name_changed'))
+            signals.foreground_window_changed.connect(self.singals_debug_fg_win_changed)
 
         # layout
         layout = QtWidgets.QVBoxLayout()
