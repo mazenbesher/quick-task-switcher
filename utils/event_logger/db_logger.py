@@ -1,10 +1,9 @@
 import datetime
 import enum
 import uuid
-from pathlib import Path
 from typing import Dict
 
-import sqlalchemy as sql
+import sqlalchemy
 from PyQt5 import QtCore
 
 from globals import signals, config
@@ -21,19 +20,15 @@ class DBEventLogger(QtCore.QObject):
     Note: to log start and quit events, log_* must be called manually
     """
 
-    def __init__(self, parent, db_path: Path):
+    def __init__(self, parent, conn: sqlalchemy.engine.Connection):
         super(DBEventLogger, self).__init__(parent)
 
         # unique id for each session
         self.session_id: str = str(uuid.uuid4())
 
         # connect
-        engine: sql.engine.Engine = sql.create_engine(
-            'sqlite:///' + db_path.resolve().as_posix(),
-            echo=True  # enable logging
-        )
-        self.conn = engine.connect()
-        metadata = sql.MetaData()
+        self.conn = conn
+        metadata = sqlalchemy.MetaData()
 
         # make sure to start once
         self.started = False
@@ -42,53 +37,53 @@ class DBEventLogger(QtCore.QObject):
         self.first_fg_win = True
 
         # foreground window change table and signals
-        self.fg_win_change_table = sql.Table(
+        self.fg_win_change_table = sqlalchemy.Table(
             'fg_win_change', metadata,
-            sql.Column('id', sql.Integer, primary_key=True),
-            sql.Column('desk', sql.String),
-            sql.Column('proc', sql.String),
-            sql.Column('title', sql.String),
-            sql.Column('pinned_win', sql.Boolean),
-            sql.Column('pinned_app', sql.Boolean),
-            sql.Column('sess_id', sql.String, default=lambda: self.session_id),
-            sql.Column('time_utc', sql.DateTime, default=datetime.datetime.utcnow),
+            sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+            sqlalchemy.Column('desk', sqlalchemy.String),
+            sqlalchemy.Column('proc', sqlalchemy.String),
+            sqlalchemy.Column('title', sqlalchemy.String),
+            sqlalchemy.Column('pinned_win', sqlalchemy.Boolean),
+            sqlalchemy.Column('pinned_app', sqlalchemy.Boolean),
+            sqlalchemy.Column('sess_id', sqlalchemy.String, default=lambda: self.session_id),
+            sqlalchemy.Column('time_utc', sqlalchemy.DateTime, default=datetime.datetime.utcnow),
 
             # durations are updated when next row is inserted or app closed
-            sql.Column('duration_seconds', sql.Integer, default=-1),
-            sql.Column('duration_microseconds', sql.Integer, default=-1),
+            sqlalchemy.Column('duration_seconds', sqlalchemy.Integer, default=-1),
+            sqlalchemy.Column('duration_microseconds', sqlalchemy.Integer, default=-1),
         )
         signals.foreground_window_changed.connect(self.log_fg_win_change)
 
         # app events (start,quit) table
         # Note: to log start and quit events, log_* must be called manually
-        self.app_events_table = sql.Table(
+        self.app_events_table = sqlalchemy.Table(
             'app_events', metadata,
-            sql.Column('event', sql.Enum(AppEvents)),
-            sql.Column('desk', sql.String),
-            sql.Column('sess_id', sql.String, default=lambda: self.session_id),
-            sql.Column('time_utc', sql.DateTime, default=datetime.datetime.utcnow),
+            sqlalchemy.Column('event', sqlalchemy.Enum(AppEvents)),
+            sqlalchemy.Column('desk', sqlalchemy.String),
+            sqlalchemy.Column('sess_id', sqlalchemy.String, default=lambda: self.session_id),
+            sqlalchemy.Column('time_utc', sqlalchemy.DateTime, default=datetime.datetime.utcnow),
         )
 
         # desk change events table and signals
-        self.desk_changes_table = sql.Table(
+        self.desk_changes_table = sqlalchemy.Table(
             'desk_changes', metadata,
-            sql.Column('desk', sql.String),
-            sql.Column('sess_id', sql.String, default=lambda: self.session_id),
-            sql.Column('time_utc', sql.DateTime, default=datetime.datetime.utcnow),
+            sqlalchemy.Column('desk', sqlalchemy.String),
+            sqlalchemy.Column('sess_id', sqlalchemy.String, default=lambda: self.session_id),
+            sqlalchemy.Column('time_utc', sqlalchemy.DateTime, default=datetime.datetime.utcnow),
         )
         signals.curr_desk_changed.connect(self.log_desk_changed)
         signals.curr_desk_name_changed.connect(self.log_desk_changed)
 
         # session durations table
-        self.sess_dur_table = sql.Table(
+        self.sess_dur_table = sqlalchemy.Table(
             'sess_dur', metadata,
-            sql.Column('sess_id', sql.String, primary_key=True, default=lambda: self.session_id),
-            sql.Column('desk_dur_sec_json', sql.JSON),
-            sql.Column('time_utc', sql.DateTime, default=datetime.datetime.utcnow),
+            sqlalchemy.Column('sess_id', sqlalchemy.String, primary_key=True, default=lambda: self.session_id),
+            sqlalchemy.Column('desk_dur_sec_json', sqlalchemy.JSON),
+            sqlalchemy.Column('time_utc', sqlalchemy.DateTime, default=datetime.datetime.utcnow),
         )
 
         # create tables
-        metadata.create_all(engine)
+        metadata.create_all(self.conn.engine)
 
         # delete records older than json_config.db_delete_older_than_days (https://stackoverflow.com/a/15881195/1617883)
         # TODO: add delete if size bigger than x
@@ -106,7 +101,7 @@ class DBEventLogger(QtCore.QObject):
         """
 
         # get first desk name and time in this session from app_events table
-        query = sql.sql.select([
+        query = sqlalchemy.sql.select([
             self.app_events_table.c.desk,
             self.app_events_table.c.time_utc,
         ]).where(self.app_events_table.c.sess_id == self.session_id)
@@ -115,7 +110,8 @@ class DBEventLogger(QtCore.QObject):
         curr_time: datetime.datetime = res.values()[1]
 
         # get all desk change events in current session
-        query = sql.sql.select([self.desk_changes_table]).where(self.desk_changes_table.c.sess_id == self.session_id)
+        query = sqlalchemy.sql.select([self.desk_changes_table]).where(
+            self.desk_changes_table.c.sess_id == self.session_id)
         desk_dur: Dict[str, datetime.timedelta] = {}
         for row in self.conn.execute(query).fetchall():
             new_desk, time_utc = row['desk'], row['time_utc']
@@ -194,10 +190,10 @@ class DBEventLogger(QtCore.QObject):
 
     def _set_last_fg_win_duration_from_now(self):
         # get last row
-        query = (sql.sql
+        query = (sqlalchemy.sql
                  .select([self.fg_win_change_table.c.time_utc, self.fg_win_change_table.c.id])
-                 .order_by(sql.desc('time_utc')))
-        last_row: sql.engine.RowProxy = self.conn.execute(query).first()
+                 .order_by(sqlalchemy.desc('time_utc')))
+        last_row: sqlalchemy.engine.RowProxy = self.conn.execute(query).first()
         last_row_id: int = last_row.values()[1]
 
         # get last time_utc (i.e. when the latest fg win was activated)
@@ -229,52 +225,53 @@ class DBEventLogger(QtCore.QObject):
         )
         self.conn.execute(ins)
 
-    def get_proc_fg(self, proc: str, fro: datetime.datetime) -> sql.engine.ResultProxy:
+    def get_proc_fg(self, proc: str, fro: datetime.datetime) -> sqlalchemy.engine.ResultProxy:
         """
         The results has the following useful methods:
             fetchall: retrieve all data as list of tuples
             keys:     columns names
         """
         return self.conn.execute(
-            sql.sql.select([
+            sqlalchemy.sql.select([
                 self.fg_win_change_table.c.desk,
                 self.fg_win_change_table.c.title,
                 self.fg_win_change_table.c.pinned_win,
                 self.fg_win_change_table.c.pinned_app,
                 self.fg_win_change_table.c.time_utc,
-            ]).where(sql.and_(
+            ]).where(sqlalchemy.and_(
                 self.fg_win_change_table.c.proc == proc,
                 self.fg_win_change_table.c.time_utc > fro
             ))
         )
 
-    def get_proc_fg_like(self, proc_search_term: str, fro: datetime.datetime) -> sql.engine.ResultProxy:
+    def get_proc_fg_like(self, proc_search_term: str, fro: datetime.datetime) -> sqlalchemy.engine.ResultProxy:
         """
         This method is similar to `get_proc_fg` but uses ilike (case INsensitive) for searching instead of exact
         match
         https://stackoverflow.com/a/4926793/1617883
         """
         return self.conn.execute(
-            sql.sql.select([
+            sqlalchemy.sql.select([
                 self.fg_win_change_table.c.desk,
                 self.fg_win_change_table.c.title,
                 self.fg_win_change_table.c.pinned_win,
                 self.fg_win_change_table.c.pinned_app,
                 self.fg_win_change_table.c.time_utc,
-            ]).where(sql.and_(
+            ]).where(sqlalchemy.and_(
                 self.fg_win_change_table.c.proc.ilike(proc_search_term),
                 self.fg_win_change_table.c.time_utc > fro,
             ))
         )
 
-    def get_proc_desk_fg_like(self, proc_search_term: str, desk: str, fro: datetime.datetime) -> sql.engine.ResultProxy:
+    def get_proc_desk_fg_like(self, proc_search_term: str, desk: str,
+                              fro: datetime.datetime) -> sqlalchemy.engine.ResultProxy:
         return self.conn.execute(
-            sql.sql.select([
+            sqlalchemy.sql.select([
                 self.fg_win_change_table.c.title,
                 self.fg_win_change_table.c.pinned_win,
                 self.fg_win_change_table.c.pinned_app,
                 self.fg_win_change_table.c.time_utc,
-            ]).where(sql.and_(
+            ]).where(sqlalchemy.and_(
                 self.fg_win_change_table.c.proc.ilike(proc_search_term),
                 self.fg_win_change_table.c.desk == desk,
                 self.fg_win_change_table.c.time_utc > fro,
