@@ -220,12 +220,19 @@ def go_to_desk_number(desk_num: int):
     vda.GoToDesktopNumber(desk_num)
 
 
-def close_hwnd(hwnd: int):
+def close_hwnd(hwnd: int) -> bool:
+    """
+    :param hwnd:
+    :return: is really closed? (save window may prevent close for instance!)
+    """
     import win32.lib.win32con as win32con
     import win32gui
 
     # https://stackoverflow.com/a/27658320/1617883
     win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+
+    # TODO: report if really closed!
+    return True
 
 
 if __name__ == '__main__':

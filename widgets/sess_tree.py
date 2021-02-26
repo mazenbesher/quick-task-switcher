@@ -1,3 +1,7 @@
+"""
+https://doc.qt.io/qt-5/qtreewidget.html
+"""
+
 from typing import List
 
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -8,12 +12,50 @@ from utils.icon_extractor import get_icon
 
 
 class SessTreeWidget(QtWidgets.QTreeWidget):
-    WIN_HWN_ROLE = 5  # for win items
+    WIN_HWND_ROLE = 5  # for win items
     DESK_NUM_ROLE = 5  # for desk items
     ITEM_TYPE_ROLE = 6  # for both
 
     DESK_ITEM = 1
     WIN_ITEM = 2
+
+    def __init__(self, parent):
+        super(SessTreeWidget, self).__init__(parent)
+
+        # right click menu: https://www.qtcentre.org/threads/18929-QTreeWidgetItem-have-contextMenu
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.show_item_context_menu)
+
+    @QtCore.pyqtSlot(QtCore.QPoint)
+    def show_item_context_menu(self, pos: QtCore.QPoint):
+        item: QtWidgets.QTreeWidgetItem = self.itemAt(pos)
+
+        # item represents a window?
+        if item.data(0, self.ITEM_TYPE_ROLE) == self.WIN_ITEM:
+            # create right click menu with close option
+            menu = QtWidgets.QMenu(self)
+
+            # close action
+            close_action = menu.addAction('Close')
+            close_action.triggered.connect(self.create_win_close_fn(item))
+
+            menu.exec_(self.viewport().mapToGlobal(pos))
+
+    def create_win_close_fn(self, item: QtWidgets.QTreeWidgetItem):
+        assert item.data(0, self.ITEM_TYPE_ROLE) == self.WIN_ITEM
+
+        # get hwnd
+        hwnd = item.data(0, self.WIN_HWND_ROLE)
+
+        @QtCore.pyqtSlot()
+        def fn():
+            # close
+            if desk_manager.close_hwnd(hwnd):
+                # remove child item (get parent which is the desk item and then
+                # remove itself which is the child)
+                item.parent().removeChild(item)
+
+        return fn
 
     def update_model(self):
         # remove previous items
@@ -53,7 +95,7 @@ class SessTreeWidget(QtWidgets.QTreeWidget):
             item = QtWidgets.QTreeWidgetItem([window.title])
             item.setIcon(0, QtGui.QIcon(str(get_icon(window.exe))))
             item.setData(0, self.ITEM_TYPE_ROLE, self.WIN_ITEM)
-            item.setData(0, self.WIN_HWN_ROLE, window.hwnd)
+            item.setData(0, self.WIN_HWND_ROLE, window.hwnd)
 
             # insert at the end
             if window.is_pinned_win or window.is_pinned_app:
@@ -81,7 +123,7 @@ class SessTreeWidget(QtWidgets.QTreeWidget):
 
         # currently selected item == window dropped
         dragged_win_item = self.currentItem()
-        dragged_win_hwnd = dragged_win_item.data(0, self.WIN_HWN_ROLE)
+        dragged_win_hwnd = dragged_win_item.data(0, self.WIN_HWND_ROLE)
 
         # move
         desk_manager.move_window_to_desktop(dragged_win_hwnd, target_desk_idx)
