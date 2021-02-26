@@ -139,6 +139,14 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 QtWidgets.QMessageBox.critical(self, "Docs not available", "Backend server is not running!")
 
+        # S to open session manager
+        if event.key() == QtCore.Qt.Key_S:
+            self.sess_manager_win.update_and_show()
+
+        # Q to quit
+        if event.key() == QtCore.Qt.Key_Q:
+            config.quit_func()
+
     def create_context_menu(self):
         self.menu = QtWidgets.QMenu(self)
 
