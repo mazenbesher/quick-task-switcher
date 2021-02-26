@@ -79,11 +79,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._sess_manager_win = SessManagerWindow(self)
         return self._sess_manager_win
 
-    def show_update_sess_win(self):
-        self.sess_manager_win.tree_widget.update_model()
-        self.sess_manager_win.adjustSize()
-        self.sess_manager_win.show()
-
     def set_titlebar_state_from_config(self):
         if not config.json_config.titlebar_hidden:
             if QtCore.Qt.FramelessWindowHint in self.flags:

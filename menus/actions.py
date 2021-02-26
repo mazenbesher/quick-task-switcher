@@ -15,7 +15,7 @@ def add_close_action(menu: QtWidgets.QMenu):
     close_action.triggered.connect(lambda: keyboard.press_and_release('ctrl+win+f4'))
 
 
-def add_sess_actions(menu: QtWidgets.QMenu, main_window):
+def add_sess_actions(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
     save_sess = menu.addAction("Save session")
     save_sess.triggered.connect(config.session_manager.save_current_sess)
 
@@ -23,4 +23,4 @@ def add_sess_actions(menu: QtWidgets.QMenu, main_window):
     load_sess.triggered.connect(config.session_manager.load_latest_sess)
 
     open_sess_manager = menu.addAction("Open session manager")
-    open_sess_manager.triggered.connect(main_window.show_update_sess_win)
+    open_sess_manager.triggered.connect(main_window.sess_manager_win.update_and_show)
