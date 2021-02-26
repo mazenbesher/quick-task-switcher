@@ -7,7 +7,7 @@ from typing import List
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 from globals import config, paths
-from utils import desk_manager
+from utils import desk_manager, desk_info
 from utils.icon_extractor import get_icon
 
 
@@ -38,6 +38,20 @@ class SessTreeWidget(QtWidgets.QTreeWidget):
             # close action
             close_action = menu.addAction('Close')
             close_action.triggered.connect(self.create_win_close_fn(item))
+
+            menu.exec_(self.viewport().mapToGlobal(pos))
+
+        # item represents a desk?
+        if item.data(0, self.ITEM_TYPE_ROLE) == self.DESK_ITEM:
+            # create right click menu
+            menu = QtWidgets.QMenu(self)
+
+            # go to desk
+            desk_num = item.data(0, self.DESK_NUM_ROLE)
+            go_to_action = menu.addAction('Go to')
+            go_to_action.triggered.connect(desk_info.create_go_to_desk_func(desk_num))
+
+            # TODO: rename desk
 
             menu.exec_(self.viewport().mapToGlobal(pos))
 
