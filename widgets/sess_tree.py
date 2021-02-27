@@ -1,13 +1,15 @@
 """
-https://doc.qt.io/qt-5/qtreewidget.html
+Docs:
+- https://doc.qt.io/qt-5/qtreewidget.html
+- https://doc.qt.io/qt-5/qtreewidgetitem.html
 """
-
+import datetime
 from typing import List
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 from globals import config, paths
-from utils import desk_manager, desk_info
+from utils import desk_manager, desk_info, formatters
 from utils.icon_extractor import get_icon
 
 
@@ -21,6 +23,18 @@ class SessTreeWidget(QtWidgets.QTreeWidget):
 
     def __init__(self, parent):
         super(SessTreeWidget, self).__init__(parent)
+
+        self.setColumnCount(2)
+        self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+        self.setDragEnabled(True)
+        self.setAcceptDrops(True)
+        self.setDropIndicatorShown(True)
+
+        # header
+        # self.header().hide()
+        self.headerItem().setText(0, 'Window')
+        self.headerItem().setText(1, 'Duration')
+        self.header().resizeSection(0, 350)
 
         # right click menu: https://www.qtcentre.org/threads/18929-QTreeWidgetItem-have-contextMenu
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -55,6 +69,18 @@ class SessTreeWidget(QtWidgets.QTreeWidget):
 
             menu.exec_(self.viewport().mapToGlobal(pos))
 
+    def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent) -> None:
+        item: QtWidgets.QTreeWidgetItem = self.itemAt(event.pos())
+
+        # item represents a desk?
+        if item.data(0, self.ITEM_TYPE_ROLE) == self.DESK_ITEM:
+            # double click desk item to go to that desk
+            desk_num = item.data(0, self.DESK_NUM_ROLE)
+            desk_info.go_to_desk(desk_num)
+
+            # prevent default behavior (collapse in this case!)
+            event.accept()
+
     def create_win_close_fn(self, item: QtWidgets.QTreeWidgetItem):
         assert item.data(0, self.ITEM_TYPE_ROLE) == self.WIN_ITEM
 
@@ -84,12 +110,14 @@ class SessTreeWidget(QtWidgets.QTreeWidget):
             desk_name = config.json_config.desktop_names[desk_idx]
 
             # create item
-            item = QtWidgets.QTreeWidgetItem([desk_name])
+            item = QtWidgets.QTreeWidgetItem(self)
+            item.setText(0, desk_name)
             item.setIcon(0, QtGui.QIcon(paths.iconPaths.desk(desk_idx)))
             # TODO: make editable and rename desk if edited
             item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsDropEnabled)
             item.setData(0, self.ITEM_TYPE_ROLE, self.DESK_ITEM)
             item.setData(0, self.DESK_NUM_ROLE, desk_idx)
+            item.setToolTip(0, f'Double click to go to {desk_name}')
 
             desk_items.append(item)
 
@@ -103,22 +131,34 @@ class SessTreeWidget(QtWidgets.QTreeWidget):
         self.insertTopLevelItem(len(desk_items), pinned_item)
 
         # add windows
+        now = datetime.datetime.now()
         windows: List[desk_manager.Window] = desk_manager.get_windows_on_all_desk()
         for window in windows:
+            # determine parent
+            if window.is_pinned_win or window.is_pinned_app:
+                parent = pinned_item
+            else:
+                parent = desk_items[window.desk_num]
+
             # create item for window
-            item = QtWidgets.QTreeWidgetItem([window.title])
+            item = QtWidgets.QTreeWidgetItem(parent)
+
+            # first col: window title + icon
+            item.setText(0, window.title)
             item.setIcon(0, QtGui.QIcon(str(get_icon(window.exe))))
             item.setData(0, self.ITEM_TYPE_ROLE, self.WIN_ITEM)
             item.setData(0, self.WIN_HWND_ROLE, window.hwnd)
 
-            # insert at the end
+            # second col: duration
+            dur_sec: float = now.timestamp() - desk_manager.get_create_time(window.pid)
+            item.setText(1, formatters.duration(dur_sec))
+
+            # set flags
             if window.is_pinned_win or window.is_pinned_app:
                 # don't allow moving pinned items
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
-                pinned_item.insertChild(pinned_item.childCount(), item)
             else:
                 item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled)
-                desk_items[window.desk_num].insertChild(desk_items[window.desk_num].childCount(), item)
 
         # expand parents
         for item in desk_items:
