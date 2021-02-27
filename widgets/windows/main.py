@@ -13,9 +13,10 @@ from widgets.tray import TrayWidget
 from .help import HelpWindow
 from .sess_manager_win import SessManagerWindow
 from .web import WebWindow
+from ..base import Base
 
 
-class MainWindow(QtWidgets.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow, Base):
     def __init__(self, backend_server: Optional[Server], conn: sqlalchemy.engine.Connection, parent=None) -> None:
         super(MainWindow, self).__init__(parent)
         self.backend_server = backend_server
@@ -89,10 +90,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
     def center(self):
-        first_monitor_center = monitors.get_in_view_loc()
-        x = first_monitor_center[0] - self.size().width() / 2
-        y = first_monitor_center[1] - self.size().height() / 2
-        self.move(x, y)
+        self.center_and_move()
 
     def set_flags(self):
         flags = 0
@@ -119,32 +117,36 @@ class MainWindow(QtWidgets.QMainWindow):
             self.closeEvent(event)
 
         # ? to show help
-        if event.key() == QtCore.Qt.Key_Question:
+        elif event.key() == QtCore.Qt.Key_Question:
             self.help_win.show()
 
         # T to toggle titlebar
-        if event.key() == QtCore.Qt.Key_T:
+        elif event.key() == QtCore.Qt.Key_T:
             config.json_config.titlebar_hidden = not config.json_config.titlebar_hidden
             self.set_titlebar_state_from_config()
             self.show()
 
         # M to minimize
-        if event.key() == QtCore.Qt.Key_M:
+        elif event.key() == QtCore.Qt.Key_M:
             self.hide()
 
         # D to open API docs
-        if event.key() == QtCore.Qt.Key_D:
+        elif event.key() == QtCore.Qt.Key_D:
             if self.backend_server is not None:
                 self.backend_server.open_docs()
             else:
                 QtWidgets.QMessageBox.critical(self, "Docs not available", "Backend server is not running!")
 
+        # W to open web interface
+        elif event.key() == QtCore.Qt.Key_W:
+            self.web_win.reload_and_show()
+
         # S to open session manager
-        if event.key() == QtCore.Qt.Key_S:
+        elif event.key() == QtCore.Qt.Key_S:
             self.sess_manager_win.update_and_show()
 
         # Q to quit
-        if event.key() == QtCore.Qt.Key_Q:
+        elif event.key() == QtCore.Qt.Key_Q:
             config.quit_func()
 
     def create_context_menu(self):
@@ -158,8 +160,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.menu.addSeparator()
 
-        open_web = self.menu.addAction("Open analysis interface")
-        open_web.triggered.connect(self.web_win.reload_and_show)
+        actions.add_open_web_action(self.menu, self)
 
         self.menu.addSeparator()
 

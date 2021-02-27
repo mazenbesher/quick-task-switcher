@@ -1,6 +1,8 @@
 import time
 from typing import Optional
 
+from utils import formatters
+
 
 class StopWatch():
     def __init__(self, name: Optional[str] = None, start_seconds: float = 0):
@@ -42,9 +44,7 @@ class StopWatch():
         return self.elapsed + (time.time() - self.start_time)
 
     def get_elapsed_formatted(self) -> str:
-        hours, remainder = divmod(self.get_elapsed(), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        return '{:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
+        return formatters.duration(self.get_elapsed())
 
 
 if __name__ == '__main__':

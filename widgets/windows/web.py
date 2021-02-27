@@ -1,9 +1,10 @@
 from PyQt5 import QtWidgets, QtCore, QtWebEngineWidgets
 
 from utils.paths import resource_path
+from widgets.base import Base
 
 
-class WebWindow(QtWidgets.QMainWindow):
+class WebWindow(QtWidgets.QMainWindow, Base):
 
     def __init__(self, parent):
         super(WebWindow, self).__init__(parent)
@@ -21,4 +22,6 @@ class WebWindow(QtWidgets.QMainWindow):
 
     def reload_and_show(self):
         self.browser.reload()
+        self.setMinimumSize(900, 800)
+        self.center_and_move()
         self.show()

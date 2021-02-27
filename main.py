@@ -8,7 +8,7 @@ from globals import config, messages
 from utils import config_manager, desk_watcher, desk_info, desk_manager, sess_manager, db_conn
 from utils.paths import resource_path
 from web import backend
-from windows import MainWindow
+from widgets.windows import MainWindow
 
 
 def main():

@@ -235,6 +235,14 @@ def close_hwnd(hwnd: int) -> bool:
     return True
 
 
+def get_create_time(pid: int) -> float:
+    """
+    The process creation time as a floating point number expressed in seconds since the epoch
+    https://psutil.readthedocs.io/en/latest/index.html?highlight=create#psutil.Process.create_time
+    """
+    return psutil.Process(pid).create_time()
+
+
 if __name__ == '__main__':
     if False:
         go_to_desk_number(1)

@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+
 from globals import ShortcutsDesc
 
 

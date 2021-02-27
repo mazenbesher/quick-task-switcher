@@ -29,3 +29,8 @@ def add_sess_actions(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
 def add_open_help_action(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
     help_action = menu.addAction('Help')
     help_action.triggered.connect(main_window.help_win.show)
+
+
+def add_open_web_action(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
+    open_web = menu.addAction("Open analysis interface")
+    open_web.triggered.connect(main_window.web_win.reload_and_show)

@@ -19,6 +19,7 @@ TODO
 - System Tray: https://www.learnpyqt.com/tutorials/system-tray-mac-menu-bar-applications-pyqt/
 - QInputDialog: https://doc.qt.io/qt-5/qinputdialog.html
 - PyInstaller usage: https://pyinstaller.readthedocs.io/en/stable/usage.html
+- psutil: https://psutil.readthedocs.io/en/latest/
 
 ## Tutorials
 

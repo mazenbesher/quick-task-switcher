@@ -37,6 +37,10 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
 
         self.tray_menu.addSeparator()
 
+        actions.add_open_web_action(self.tray_menu, self.main_win)
+
+        self.tray_menu.addSeparator()
+
         actions.add_sess_actions(self.tray_menu, self.main_win)
 
         self.tray_menu.addSeparator()
