@@ -24,3 +24,8 @@ def add_sess_actions(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
 
     open_sess_manager = menu.addAction("Open session manager")
     open_sess_manager.triggered.connect(main_window.sess_manager_win.update_and_show)
+
+
+def add_open_help_action(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
+    help_action = menu.addAction('Help')
+    help_action.triggered.connect(main_window.help_win.show)

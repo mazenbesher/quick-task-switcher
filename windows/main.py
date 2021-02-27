@@ -167,6 +167,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.menu.addSeparator()
 
+        actions.add_open_help_action(self.menu, self)
+
         hide_action = self.menu.addAction('Minimize/Hide')
         hide_action.triggered.connect(self.hide)
 

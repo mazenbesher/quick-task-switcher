@@ -9,6 +9,8 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
     def __init__(self, parent):
         super(TrayWidget, self).__init__(parent)
 
+        self.main_win = parent
+
         # change icon to current desk
         desk_info.update()
         self.setIcon(QtGui.QIcon(iconPaths.desk(config.curr_desk)))
@@ -26,7 +28,7 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
         self.desk_name_action.setDisabled(True)
         self.tray_menu.addAction(self.desk_name_action)
 
-        actions.add_change_desk_name_action(self.tray_menu, self.parent())
+        actions.add_change_desk_name_action(self.tray_menu, self.main_win)
         actions.add_close_action(self.tray_menu)
 
         # add submenu to go specific desktop
@@ -35,14 +37,16 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
 
         self.tray_menu.addSeparator()
 
-        actions.add_sess_actions(self.tray_menu, self.parent())
+        actions.add_sess_actions(self.tray_menu, self.main_win)
 
         self.tray_menu.addSeparator()
 
         # add center main window action
         self.center_main_win_action = QtWidgets.QAction("Center Window")
-        self.center_main_win_action.triggered.connect(self.parent().center)
+        self.center_main_win_action.triggered.connect(self.main_win.center)
         self.tray_menu.addAction(self.center_main_win_action)
+
+        actions.add_open_help_action(self.tray_menu, self.main_win)
 
         # show/hide main window
         self.show_hide_main_win_action = QtWidgets.QAction("Show/Hide Window")
@@ -64,8 +68,8 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
 
     def show_hide_main_win(self):
         # show main window if hidden (aka minimized) else hide
-        if not self.parent().isVisible():
-            self.parent().show()
+        if not self.main_win.isVisible():
+            self.main_win.show()
         else:
             self.parent().hide()
 
