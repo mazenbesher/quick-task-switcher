@@ -36,13 +36,9 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
         self.tray_menu.addMenu(self.goto_submenu)
 
         self.tray_menu.addSeparator()
-
         actions.add_open_web_action(self.tray_menu, self.main_win)
-
         self.tray_menu.addSeparator()
-
         actions.add_sess_actions(self.tray_menu, self.main_win)
-
         self.tray_menu.addSeparator()
 
         # add center main window action
@@ -51,6 +47,7 @@ class TrayWidget(QtWidgets.QSystemTrayIcon):
         self.tray_menu.addAction(self.center_main_win_action)
 
         actions.add_open_help_action(self.tray_menu, self.main_win)
+        actions.add_open_settings_action(self.tray_menu, self.main_win)
 
         # show/hide main window
         self.show_hide_main_win_action = QtWidgets.QAction("Show/Hide Window")

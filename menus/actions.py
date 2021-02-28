@@ -34,3 +34,8 @@ def add_open_help_action(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
 def add_open_web_action(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
     open_web = menu.addAction("Open analysis interface")
     open_web.triggered.connect(main_window.web_win.reload_and_show)
+
+
+def add_open_settings_action(menu: QtWidgets.QMenu, main_window: 'MainWindow'):
+    open_settings = menu.addAction("Settings")
+    open_settings.triggered.connect(main_window.settings_win.show)

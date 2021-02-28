@@ -14,6 +14,7 @@ from .help import HelpWindow
 from .sess_manager_win import SessManagerWindow
 from .web import WebWindow
 from ..base import Base
+from ..settings import SettingsWindow
 
 
 class MainWindow(QtWidgets.QMainWindow, Base):
@@ -47,6 +48,7 @@ class MainWindow(QtWidgets.QMainWindow, Base):
         self.help_win = HelpWindow(self)
         self.web_win = WebWindow(self)
         self._sess_manager_win = None  # create on demand
+        self._settings_win = None  # create on demand
 
         # context menu
         self.create_context_menu()
@@ -79,6 +81,12 @@ class MainWindow(QtWidgets.QMainWindow, Base):
         if not self._sess_manager_win:
             self._sess_manager_win = SessManagerWindow(self)
         return self._sess_manager_win
+
+    @property
+    def settings_win(self) -> SettingsWindow:
+        if not self._settings_win:
+            self._settings_win = SettingsWindow(self)
+        return self._settings_win
 
     def set_titlebar_state_from_config(self):
         if not config.json_config.titlebar_hidden:
@@ -159,16 +167,12 @@ class MainWindow(QtWidgets.QMainWindow, Base):
         self.menu.addMenu(goto_submenu)
 
         self.menu.addSeparator()
-
         actions.add_open_web_action(self.menu, self)
-
         self.menu.addSeparator()
-
         actions.add_sess_actions(self.menu, self)
-
         self.menu.addSeparator()
-
         actions.add_open_help_action(self.menu, self)
+        actions.add_open_settings_action(self.menu, self)
 
         hide_action = self.menu.addAction('Minimize/Hide')
         hide_action.triggered.connect(self.hide)
